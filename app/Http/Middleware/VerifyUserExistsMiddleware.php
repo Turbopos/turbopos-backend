@@ -2,23 +2,13 @@
 
 namespace App\Http\Middleware;
 
-use App\Models\User;
 use Closure;
-use Firebase\JWT\JWT;
-use Firebase\JWT\Key;
+use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
 
 class VerifyUserExistsMiddleware
 {
-    private $key;
-
-    public function __construct()
-    {
-        $this->key = env('JWT_SECRET', 'default-secret-key');
-    }
-
     /**
      * Handle an incoming request.
      *
@@ -26,20 +16,14 @@ class VerifyUserExistsMiddleware
      */
     public function handle(Request $request, Closure $next): Response
     {
-        $token = $request->bearerToken();
+        $user = $request->user;
 
-        try {
-            $decoded = JWT::decode($token, new Key($this->key, 'HS256'));
-            $user = User::find($decoded->sub);
-
-            if (!$user) {
-                throw new UnauthorizedHttpException('Unauthorized');
-            }
-        } catch (\Exception $e) {
-            throw new UnauthorizedHttpException('Unauthorized');
+        if (!$user) {
+            throw new HttpResponseException(response()->json([
+                'message' => "Unauthorized",
+            ], Response::HTTP_UNAUTHORIZED));
         }
 
         return $next($request);
     }
 }
-

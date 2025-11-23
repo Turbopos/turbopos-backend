@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use Firebase\JWT\JWT;
-use Firebase\JWT\Key;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
@@ -37,7 +36,7 @@ class AuthController extends Controller
             'iss' => 'turbopos-backend',
             'sub' => $user->id,
             'iat' => time(),
-            'exp' => time() + 3600, // 1 jam
+            'exp' => time() + 60 * 60 * 24 * 7, // 1 jam
         ];
 
         $token = JWT::encode($payload, $this->key, 'HS256');
@@ -50,6 +49,31 @@ class AuthController extends Controller
 
     public function getProfile(Request $request)
     {
-        return response()->json($request->user);
+        return response()->json([
+            'profile' => $request->user,
+        ]);
+    }
+
+    public function update(Request $request)
+    {
+        $user = $request->user;
+
+        $request->validate([
+            'email' => 'sometimes|email|unique:users,email,' . $user->id,
+            'password' => 'sometimes|min:8',
+            'nama' => 'sometimes|string',
+        ]);
+
+        $data = $request->only(['email', 'nama']);
+
+        if ($request->has('password') && !empty($request->password)) {
+            $data['password'] = Hash::make($request->password);
+        }
+
+        $user->update($data);
+
+        return response()->json([
+            'user' => $user->fresh(),
+        ]);
     }
 }

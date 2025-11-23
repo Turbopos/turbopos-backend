@@ -29,12 +29,14 @@ class JwtAuthMiddleware
         $token = $request->bearerToken();
 
         try {
-            $decoded = JWT::decode($token, new Key($this->key, 'HS256'));
-            $user = User::find($decoded->sub);
+            if ($token) {
+                $decoded = JWT::decode($token, new Key($this->key, 'HS256'));
+                $user = User::find($decoded->sub);
 
-            Auth::setUser($user);
+                Auth::setUser($user);
 
-            $request->merge(['user' => $user]);
+                $request->merge(['user' => $user]);
+            }
         } catch (\Exception $e) {
             //
         }
