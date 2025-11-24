@@ -16,7 +16,7 @@ class UserController extends Controller
             $search = $request->search;
             $query->where(function ($q) use ($search) {
                 $q->where('nama', 'like', '%' . $search . '%')
-                    ->orWhere('email', 'like', '%' . $search . '%');
+                    ->orWhere('username', 'like', '%' . $search . '%');
             });
         }
 
@@ -36,14 +36,14 @@ class UserController extends Controller
         $this->ensureIsAdmin();
 
         $request->validate([
-            'email' => 'required|email|unique:users,email',
+            'username' => 'required|unique:users,username',
             'password' => 'required|min:8',
             'nama' => 'required|string',
             'role' => 'required|in:admin,mekanik,operator',
         ]);
 
         $user = User::create([
-            'email' => $request->email,
+            'username' => $request->username,
             'password' => $request->password,
             'nama' => $request->nama,
             'role' => $request->role,
@@ -61,13 +61,13 @@ class UserController extends Controller
         $user = User::findOrFail($id);
 
         $request->validate([
-            'email' => 'sometimes|email|unique:users,email,' . $id,
+            'username' => 'sometimes|unique:users,username,' . $id,
             'password' => 'sometimes|min:8',
             'nama' => 'sometimes|string',
             'role' => 'sometimes|in:admin,mekanik,operator',
         ]);
 
-        $data = $request->only(['email', 'nama', 'role']);
+        $data = $request->only(['username', 'nama', 'role']);
 
         if ($request->password) {
             $data['password'] = Hash::make($request->password);
