@@ -55,17 +55,17 @@ class ProductController extends Controller
             'category_id' => 'required|exists:categories,id',
             'nama' => 'required|string',
             'distributor_id' => 'nullable|exists:distributors,id',
-            'harga_pokok' => 'required|numeric',
+            'harga_pokok' => 'required_if:jenis,barang|numeric',
             'harga_jual' => 'required|numeric',
-            'stok' => 'required|integer',
-            'satuan' => 'required|string',
+            'stok' => 'required_if:jenis,barang|integer',
+            'satuan' => 'required_if:jenis,barang|string',
         ]);
 
         $data = $request->all();
         $data['kode'] = uniqid();
         $data['barcode'] = $this->generateBarcode(new BarcodeItem($data['kode'], $this->barcode_type));
 
-        $product = Product::create($data);
+        $product = Product::create($this->_cleanData($data));
 
         return response()->json(['product' => $product], 201);
     }
@@ -92,7 +92,7 @@ class ProductController extends Controller
         $data = $request->all();
         $data['barcode'] = $this->generateBarcode(new BarcodeItem($product->kode, $this->barcode_type));
 
-        $product->update($data);
+        $product->update($this->_cleanData($data));
 
         return response()->json(['product' => $product]);
     }
@@ -108,5 +108,14 @@ class ProductController extends Controller
         $product->delete();
 
         return response()->json(['message' => 'Product deleted successfully']);
+    }
+
+    private function _cleanData($data)
+    {
+        if ($data['jenis'] == Product::JENIS_JASA) {
+            $data['harga_pokok'] = null;
+            $data['stok'] = null;
+            $data['satuan'] = null;
+        }
     }
 }
