@@ -15,7 +15,7 @@ class Customer extends Model
         'keterangan',
     ];
 
-    public function customerTransports(): HasMany
+    public function transports(): HasMany
     {
         return $this->hasMany(CustomerTransport::class);
     }
