@@ -12,7 +12,10 @@ class PurchaseOrderDetail extends Model
         'product_id',
         'harga_pokok',
         'jumlah',
+        'ppn',
         'subtotal',
+        'diskon',
+        'total',
     ];
 
     public function purchaseOrder(): BelongsTo

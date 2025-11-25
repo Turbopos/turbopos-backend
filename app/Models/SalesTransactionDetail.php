@@ -10,9 +10,13 @@ class SalesTransactionDetail extends Model
     protected $fillable = [
         'sales_transaction_id',
         'product_id',
-        'harga',
+        'harga_pokok',
+        'harga_jual',
         'jumlah',
+        'ppn',
         'subtotal',
+        'diskon',
+        'total',
     ];
 
     public function salesTransaction(): BelongsTo

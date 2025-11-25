@@ -16,9 +16,9 @@ return new class extends Migration
             $table->string('kode')->unique();
             $table->foreignId('distributor_id')->constrained('distributors')->onDelete('cascade');
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
-            $table->float('ppn');
+            $table->float('ppn')->default(0);
             $table->float('subtotal');
-            $table->float('diskon');
+            $table->float('diskon')->default(0);
             $table->float('total');
             $table->enum('status', ['pending', 'completed', 'cancelled']);
             $table->timestamps();

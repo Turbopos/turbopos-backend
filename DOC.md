@@ -903,7 +903,9 @@ Get list of purchase orders with optional filters and pagination, sorted by tran
                     "product_id": 1,
                     "harga_pokok": 10000,
                     "jumlah": 10,
-                    "subtotal": 100000,
+                    "ppn": 1000,
+                    "diskon": 500,
+                    "subtotal": 109500,
                     "product": {
                         "id": 1,
                         "nama": "Product 1"
@@ -956,7 +958,9 @@ None
                 "product_id": 1,
                 "harga_pokok": 10000,
                 "jumlah": 10,
-                "subtotal": 100000,
+                "ppn": 1000,
+                "diskon": 500,
+                "subtotal": 109500,
                 "product": {
                     "id": 1,
                     "nama": "Product 1"
@@ -984,6 +988,8 @@ Create a new purchase order with batch items.
 | items.*.product_id | integer | required      |
 | items.*.harga_pokok | numeric | required      |
 | items.*.jumlah | integer | required      |
+| items.*.ppn | numeric | required      |
+| items.*.diskon | numeric | required      |
 
 #### Response
 
@@ -1011,12 +1017,32 @@ Update a purchase order. Items are optional; if provided, existing details will 
 | items.*.product_id | integer | required if items        |
 | items.*.harga_pokok | numeric | required if items        |
 | items.*.jumlah | integer | required if items        |
+| items.*.ppn | numeric | required if items        |
+| items.*.diskon | numeric | required if items        |
 
 #### Response
 
 ```json
 {
     "message": "Purchase order updated successfully"
+}
+```
+
+### PATCH /purchase-order/{id}/status
+
+Update status of a purchase order.
+
+#### Parameters
+
+| Name   | Type   | Default Value             |
+| ------ | ------ | ------------------------- |
+| status | string | required (pending, completed, cancelled) |
+
+#### Response
+
+```json
+{
+    "message": "Purchase order status updated successfully"
 }
 ```
 
@@ -1033,5 +1059,188 @@ None
 ```json
 {
     "message": "Purchase order deleted successfully"
+}
+```
+
+## Sales Transactions
+
+### GET /sales-transaction
+
+Get list of sales transactions with optional filters and pagination, sorted by transaction_at desc.
+
+#### Parameters
+
+| Name               | Type    | Default Value |
+| ------------------ | ------- | ------------- |
+| status             | string  | null (pending, completed, cancelled) |
+| customer_id        | integer | null          |
+| user_id            | integer | null          |
+| search             | string  | null          |
+| transaction_at_from| date    | null          |
+| transaction_at_to  | date    | null          |
+| limit              | integer | 10            |
+
+#### Response
+
+```json
+{
+    "sales_transactions": [
+        {
+            "id": 1,
+            "kode": "ST-6743a123456789",
+            "customer_id": 1,
+            "user_id": 1,
+            "ppn": 15000,
+            "subtotal": 150000,
+            "diskon": 0,
+            "total": 165000,
+            "status": "pending",
+            "transaction_at": "2025-11-25T00:00:00.000000Z",
+            "created_at": "2025-11-25T00:25:44.000000Z",
+            "updated_at": "2025-11-25T00:25:44.000000Z",
+            "customer": {
+                "id": 1,
+                "nama": "Customer 1"
+            },
+            "user": {
+                "id": 1,
+                "nama": "User 1"
+            },
+            "sales_transaction_details": [
+                {
+                    "id": 1,
+                    "product_id": 1,
+                    "harga_pokok": 10000,
+                    "harga_jual": 15000,
+                    "jumlah": 10,
+                    "ppn": 10,
+                    "diskon": 5,
+                    "subtotal": 150000,
+                    "total": 157500,
+                    "product": {
+                        "id": 1,
+                        "nama": "Product 1"
+                    }
+                }
+            ]
+        }
+    ],
+    "total": 1,
+    "per_page": 10
+}
+```
+
+### GET /sales-transaction/{id}
+
+Get a specific sales transaction with details.
+
+#### Parameters
+
+None
+
+#### Response
+
+```json
+{
+    "sales_transaction": {
+        "id": 1,
+        "kode": "ST-6743a123456789",
+        "customer_id": 1,
+        "user_id": 1,
+        "ppn": 15000,
+        "subtotal": 150000,
+        "diskon": 0,
+        "total": 165000,
+        "status": "pending",
+        "transaction_at": "2025-11-25T00:00:00.000000Z",
+        "created_at": "2025-11-25T00:25:44.000000Z",
+        "updated_at": "2025-11-25T00:25:44.000000Z",
+        "customer": {
+            "id": 1,
+            "nama": "Customer 1"
+        },
+        "user": {
+            "id": 1,
+            "nama": "User 1"
+        },
+        "sales_transaction_details": [
+            {
+                "id": 1,
+                "product_id": 1,
+                "harga_pokok": 10000,
+                "harga_jual": 15000,
+                "jumlah": 10,
+                "ppn": 10,
+                "diskon": 5,
+                "subtotal": 150000,
+                "total": 157500,
+                "product": {
+                    "id": 1,
+                    "nama": "Product 1"
+                }
+            }
+        ]
+    }
+}
+```
+
+### POST /sales-transaction
+
+Create a new sales transaction with batch items.
+
+#### Parameters
+
+| Name           | Type    | Default Value |
+| -------------- | ------- | ------------- |
+| customer_id    | integer | required      |
+| user_id        | integer | required      |
+| ppn            | numeric | required      |
+| diskon         | numeric | required      |
+| transaction_at | date    | required      |
+| items          | array   | required      |
+| items.*.product_id | integer | required      |
+| items.*.jumlah | integer | required      |
+| items.*.ppn    | numeric | required      |
+| items.*.diskon | numeric | required      |
+
+#### Response
+
+```json
+{
+    "message": "Sales transaction created successfully"
+}
+```
+
+### PATCH /sales-transaction/{id}/status
+
+Update status of a sales transaction.
+
+#### Parameters
+
+| Name   | Type   | Default Value             |
+| ------ | ------ | ------------------------- |
+| status | string | required (pending, completed, cancelled) |
+
+#### Response
+
+```json
+{
+    "message": "Sales transaction status updated successfully"
+}
+```
+
+### DELETE /sales-transaction/{id}
+
+Delete a sales transaction.
+
+#### Parameters
+
+None
+
+#### Response
+
+```json
+{
+    "message": "Sales transaction deleted successfully"
 }
 ```

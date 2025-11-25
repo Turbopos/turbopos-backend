@@ -3,23 +3,23 @@
 namespace App\Http\Controllers;
 
 use App\Models\Product;
-use App\Models\PurchaseOrder;
-use App\Models\PurchaseOrderDetail;
+use App\Models\SalesTransaction;
+use App\Models\SalesTransactionDetail;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
-class PurchaseOrderController extends Controller
+class SalesTransactionController extends Controller
 {
     public function index(Request $request)
     {
-        $query = PurchaseOrder::with(['distributor', 'user', 'purchaseOrderDetails.product']);
+        $query = SalesTransaction::with(['customer', 'user', 'salesTransactionDetails.product']);
 
         if ($request->status) {
             $query->where('status', $request->status);
         }
 
-        if ($request->distributor_id) {
-            $query->where('distributor_id', $request->distributor_id);
+        if ($request->customer_id) {
+            $query->where('customer_id', $request->customer_id);
         }
 
         if ($request->user_id) {
@@ -42,21 +42,21 @@ class PurchaseOrderController extends Controller
         $query->orderBy('transaction_at', 'desc');
 
         $limit = $request->get('limit', 10);
-        $purchaseOrders = $query->paginate($limit);
+        $salesTransactions = $query->paginate($limit);
 
-        return response()->json($this->paginatedResponse($purchaseOrders, 'purchase_orders'));
+        return response()->json($this->paginatedResponse($salesTransactions, 'sales_transactions'));
     }
 
     public function show($id)
     {
-        $purchaseOrder = PurchaseOrder::with(['distributor', 'user', 'purchaseOrderDetails.product'])->findOrFail($id);
-        return response()->json(['purchase_order' => $purchaseOrder]);
+        $salesTransaction = SalesTransaction::with(['customer', 'user', 'salesTransactionDetails.product'])->findOrFail($id);
+        return response()->json(['sales_transaction' => $salesTransaction]);
     }
 
     public function store(Request $request)
     {
         $request->validate([
-            'distributor_id' => 'required|exists:distributors,id',
+            'customer_id' => 'required|exists:customers,id',
             'user_id' => 'required|exists:users,id',
             'ppn' => 'required|numeric|min:0',
             'diskon' => 'required|numeric|min:0',
@@ -64,17 +64,21 @@ class PurchaseOrderController extends Controller
             'items' => 'required|array|min:1',
             'items.*.product_id' => 'required|exists:products,id',
             'items.*.jumlah' => 'required|integer|min:1',
-            'items.*.harga_pokok' => 'required|integer|min:1',
             'items.*.ppn' => 'required|numeric|min:0',
             'items.*.diskon' => 'required|numeric|min:0',
         ]);
 
         DB::transaction(function () use ($request) {
+            $products = Product::whereIn('id', collect($request->items)->pluck('product_id')->toArray())->get();
             $items = $request->items;
 
             $subtotal = 0;
             foreach ($items as $i => $item) {
-                $items[$i]['subtotal'] = $item['harga_pokok'] * $item['jumlah'];
+                $product = $products->where('id', $item['product_id'])->first();
+
+                $items[$i]['harga_pokok'] = $product->harga_pokok;
+                $items[$i]['harga_jual'] = $product->harga_jual;
+                $items[$i]['subtotal'] = $product->harga_jual * $item['jumlah'];
 
                 $ppn = $items[$i]['subtotal'] * ($item['ppn'] / 100);
                 $diskon = $items[$i]['subtotal'] * ($item['diskon'] / 100);
@@ -85,23 +89,24 @@ class PurchaseOrderController extends Controller
 
             $total = $subtotal + $request->ppn - $request->diskon;
 
-            $purchaseOrder = PurchaseOrder::create([
-                'kode' => uniqid('PO-'),
-                'distributor_id' => $request->distributor_id,
+            $salesTransaction = SalesTransaction::create([
+                'kode' => uniqid('ST-'),
+                'customer_id' => $request->customer_id,
                 'user_id' => $request->user_id,
                 'ppn' => $request->ppn,
                 'subtotal' => $subtotal,
                 'diskon' => $request->diskon,
                 'total' => $total,
-                'status' => PurchaseOrder::STATUS_PENDING,
+                'status' => SalesTransaction::STATUS_PENDING,
                 'transaction_at' => $request->transaction_at,
             ]);
 
             foreach ($items as $item) {
-                PurchaseOrderDetail::create([
-                    'purchase_order_id' => $purchaseOrder->id,
+                SalesTransactionDetail::create([
+                    'sales_transaction_id' => $salesTransaction->id,
                     'product_id' => $item['product_id'],
                     'harga_pokok' => $item['harga_pokok'],
+                    'harga_jual' => $item['harga_jual'],
                     'jumlah' => $item['jumlah'],
                     'subtotal' => $item['subtotal'],
                     'ppn' => $item['ppn'],
@@ -111,27 +116,27 @@ class PurchaseOrderController extends Controller
             }
         });
 
-        return response()->json(['message' => 'Purchase order created successfully'], 201);
+        return response()->json(['message' => 'Sales transaction created successfully'], 201);
     }
 
     public function destroy($id)
     {
-        $purchaseOrder = PurchaseOrder::findOrFail($id);
-        $purchaseOrder->delete();
+        $salesTransaction = SalesTransaction::findOrFail($id);
+        $salesTransaction->delete();
 
-        return response()->json(['message' => 'Purchase order deleted successfully']);
+        return response()->json(['message' => 'Sales transaction deleted successfully']);
     }
 
     public function updateStatus(Request $request, $id)
     {
-        $purchaseOrder = PurchaseOrder::findOrFail($id);
+        $salesTransaction = SalesTransaction::findOrFail($id);
 
         $request->validate([
             'status' => 'required|in:pending,completed,cancelled',
         ]);
 
-        $purchaseOrder->update(['status' => $request->status]);
+        $salesTransaction->update(['status' => $request->status]);
 
-        return response()->json(['message' => 'Purchase order status updated successfully']);
+        return response()->json(['message' => 'Sales transaction status updated successfully']);
     }
 }

@@ -21,5 +21,5 @@ Route::middleware(['jwt.auth', 'verify.user.exists'])->group(function () {
     Route::resource('/distributor', DistributorController::class, ['except' => ['create']]);
     Route::resource('/product', ProductController::class, ['except' => ['create']]);
     Route::resource('/purchase-order', PurchaseOrderController::class, ['except' => ['create', 'edit']]);
+    Route::put('/purchase-order/{id}/status', [PurchaseOrderController::class, 'updateStatus']);
 });
-
