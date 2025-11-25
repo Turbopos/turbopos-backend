@@ -31,13 +31,20 @@ class UserController extends Controller
         ]);
     }
 
+    public function show($id)
+    {
+        $user = User::findOrFail($id);
+
+        return response()->json(['user' => $user]);
+    }
+
     public function store(Request $request)
     {
         $this->ensureIsAdmin();
 
         $request->validate([
             'username' => 'required|unique:users,username',
-            'password' => 'required|min:8',
+            'password' => 'required',
             'nama' => 'required|string',
             'role' => 'required|in:admin,mekanik,operator',
         ]);
@@ -62,7 +69,7 @@ class UserController extends Controller
 
         $request->validate([
             'username' => 'sometimes|unique:users,username,' . $id,
-            'password' => 'sometimes|min:8',
+            'password' => 'sometimes',
             'nama' => 'sometimes|string',
             'role' => 'sometimes|in:admin,mekanik,operator',
         ]);

@@ -13,6 +13,7 @@ class Product extends Model
     const JENIS_JASA = 'jasa';
 
     protected $fillable = [
+        'kode',
         'jenis',
         'category_id',
         'nama',

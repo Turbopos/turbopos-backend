@@ -3,12 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Traits\BarcodeController;
+use App\Http\Controllers\Traits\BarcodeItem;
 use App\Models\Product;
 use Illuminate\Http\Request;
 
 class ProductController extends Controller
 {
     use BarcodeController;
+    public $barcode_type = 'product';
 
     public function index(Request $request)
     {
@@ -60,7 +62,8 @@ class ProductController extends Controller
         ]);
 
         $data = $request->all();
-        $data['barcode'] = $this->generateBarcode(uniqid());
+        $data['kode'] = uniqid();
+        $data['barcode'] = $this->generateBarcode(new BarcodeItem($data['kode'], $this->barcode_type));
 
         $product = Product::create($data);
 
@@ -87,7 +90,7 @@ class ProductController extends Controller
         }
 
         $data = $request->all();
-        $data['barcode'] = $this->generateBarcode(uniqid());
+        $data['barcode'] = $this->generateBarcode(new BarcodeItem($product->kode, $this->barcode_type));
 
         $product->update($data);
 

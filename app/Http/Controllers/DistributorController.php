@@ -24,7 +24,8 @@ class DistributorController extends Controller
 
     public function show($id)
     {
-        $distributor = Distributor::findOrFail($id)->with(['products']);
+        $distributor = Distributor::with(['products'])->findOrFail($id);
+
         return response()->json([
             'distributor' => $distributor,
         ]);
@@ -78,4 +79,3 @@ class DistributorController extends Controller
         return response()->json(['message' => 'Distributor deleted successfully']);
     }
 }
-

@@ -24,7 +24,7 @@ class CustomerController extends Controller
 
     public function show($id)
     {
-        $customer = Customer::findOrFail($id)->with(['transports']);
+        $customer = Customer::with(['transports'])->findOrFail($id);
         return response()->json(['customer' => $customer]);
     }
 
@@ -74,4 +74,3 @@ class CustomerController extends Controller
         return response()->json(['message' => 'Customer deleted successfully']);
     }
 }
-
