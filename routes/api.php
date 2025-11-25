@@ -5,6 +5,8 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\CustomerTransportController;
 use App\Http\Controllers\DistributorController;
+use App\Http\Controllers\ProductController;
+use App\Http\Controllers\PurchaseOrderController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -17,5 +19,7 @@ Route::middleware(['jwt.auth', 'verify.user.exists'])->group(function () {
     Route::resource('/customer', CustomerController::class, ['except' => ['create']]);
     Route::resource('/customer-transport', CustomerTransportController::class, ['except' => 'create']);
     Route::resource('/distributor', DistributorController::class, ['except' => ['create']]);
+    Route::resource('/product', ProductController::class, ['except' => ['create']]);
+    Route::resource('/purchase-order', PurchaseOrderController::class, ['except' => ['create', 'edit']]);
 });
 

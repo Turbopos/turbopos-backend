@@ -686,3 +686,352 @@ None
     "message": "Distributor deleted successfully"
 }
 ```
+
+## Products
+
+### GET /product
+
+Get list of products with optional filters and pagination.
+
+#### Parameters
+
+| Name           | Type    | Default Value             |
+| -------------- | ------- | ------------------------- |
+| jenis          | string  | null (barang, jasa)       |
+| category_id    | integer | null                      |
+| distributor_id | integer | null                      |
+| search         | string  | null                      |
+| limit          | integer | 10                        |
+
+#### Response
+
+```json
+{
+    "products": [
+        {
+            "id": 1,
+            "kode": "6743a123456789",
+            "jenis": "barang",
+            "category_id": 1,
+            "nama": "Product 1",
+            "barcode": "barcodes/product/6743a123456789.png",
+            "distributor_id": 1,
+            "harga_pokok": 10000,
+            "harga_jual": 15000,
+            "stok": 100,
+            "satuan": "pcs",
+            "created_at": "2025-11-25T00:25:44.000000Z",
+            "updated_at": "2025-11-25T00:25:44.000000Z"
+        }
+    ],
+    "total": 1,
+    "per_page": 10
+}
+```
+
+### GET /product/{id}
+
+Get a specific product.
+
+#### Parameters
+
+None
+
+#### Response
+
+```json
+{
+    "product": {
+        "id": 1,
+        "kode": "6743a123456789",
+        "jenis": "barang",
+        "category_id": 1,
+        "nama": "Product 1",
+        "barcode": "barcodes/product/6743a123456789.png",
+        "distributor_id": 1,
+        "harga_pokok": 10000,
+        "harga_jual": 15000,
+        "stok": 100,
+        "satuan": "pcs",
+        "created_at": "2025-11-25T00:25:44.000000Z",
+        "updated_at": "2025-11-25T00:25:44.000000Z"
+    }
+}
+```
+
+### POST /product
+
+Create a new product. Requires admin role.
+
+#### Parameters
+
+| Name           | Type    | Default Value |
+| -------------- | ------- | ------------- |
+| jenis          | string  | required (barang, jasa) |
+| category_id    | integer | required      |
+| nama           | string  | required      |
+| distributor_id | integer | null          |
+| harga_pokok    | numeric | required if jenis=barang |
+| harga_jual     | numeric | required      |
+| stok           | integer | required if jenis=barang |
+| satuan         | string  | required if jenis=barang |
+
+#### Response
+
+```json
+{
+    "product": {
+        "id": 1,
+        "kode": "6743a123456789",
+        "jenis": "barang",
+        "category_id": 1,
+        "nama": "New Product",
+        "barcode": "barcodes/product/6743a123456789.png",
+        "distributor_id": 1,
+        "harga_pokok": 10000,
+        "harga_jual": 15000,
+        "stok": 100,
+        "satuan": "pcs",
+        "created_at": "2025-11-25T00:25:44.000000Z",
+        "updated_at": "2025-11-25T00:25:44.000000Z"
+    }
+}
+```
+
+### PUT /product/{id}
+
+Update a product. Requires admin role.
+
+#### Parameters
+
+| Name           | Type    | Default Value         |
+| -------------- | ------- | --------------------- |
+| jenis          | string  | null (barang, jasa)   |
+| category_id    | integer | null                  |
+| nama           | string  | null                  |
+| distributor_id | integer | null                  |
+| harga_pokok    | numeric | null                  |
+| harga_jual     | numeric | null                  |
+| stok           | integer | null                  |
+| satuan         | string  | null                  |
+
+#### Response
+
+```json
+{
+    "product": {
+        "id": 1,
+        "kode": "6743a123456789",
+        "jenis": "barang",
+        "category_id": 1,
+        "nama": "Updated Product",
+        "barcode": "barcodes/product/6743a123456789.png",
+        "distributor_id": 1,
+        "harga_pokok": 10000,
+        "harga_jual": 15000,
+        "stok": 100,
+        "satuan": "pcs",
+        "created_at": "2025-11-25T00:25:44.000000Z",
+        "updated_at": "2025-11-25T00:25:44.000000Z"
+    }
+}
+```
+
+### DELETE /product/{id}
+
+Delete a product. Requires admin role.
+
+#### Parameters
+
+None
+
+#### Response
+
+```json
+{
+    "message": "Product deleted successfully"
+}
+```
+
+## Purchase Orders
+
+### GET /purchase-order
+
+Get list of purchase orders with optional filters and pagination, sorted by transaction_at desc.
+
+#### Parameters
+
+| Name               | Type    | Default Value |
+| ------------------ | ------- | ------------- |
+| status             | string  | null (pending, completed, cancelled) |
+| distributor_id     | integer | null          |
+| user_id            | integer | null          |
+| search             | string  | null          |
+| transaction_at_from| date    | null          |
+| transaction_at_to  | date    | null          |
+| limit              | integer | 10            |
+
+#### Response
+
+```json
+{
+    "purchase_orders": [
+        {
+            "id": 1,
+            "kode": "PO-6743a123456789",
+            "distributor_id": 1,
+            "user_id": 1,
+            "ppn": 10,
+            "subtotal": 100000,
+            "diskon": 0,
+            "total": 110000,
+            "status": "pending",
+            "transaction_at": "2025-11-25T00:00:00.000000Z",
+            "created_at": "2025-11-25T00:25:44.000000Z",
+            "updated_at": "2025-11-25T00:25:44.000000Z",
+            "distributor": {
+                "id": 1,
+                "nama": "Distributor 1"
+            },
+            "user": {
+                "id": 1,
+                "nama": "User 1"
+            },
+            "purchase_order_details": [
+                {
+                    "id": 1,
+                    "product_id": 1,
+                    "harga_pokok": 10000,
+                    "jumlah": 10,
+                    "subtotal": 100000,
+                    "product": {
+                        "id": 1,
+                        "nama": "Product 1"
+                    }
+                }
+            ]
+        }
+    ],
+    "total": 1,
+    "per_page": 10
+}
+```
+
+### GET /purchase-order/{id}
+
+Get a specific purchase order with details.
+
+#### Parameters
+
+None
+
+#### Response
+
+```json
+{
+    "purchase_order": {
+        "id": 1,
+        "kode": "PO-6743a123456789",
+        "distributor_id": 1,
+        "user_id": 1,
+        "ppn": 10,
+        "subtotal": 100000,
+        "diskon": 0,
+        "total": 110000,
+        "status": "pending",
+        "transaction_at": "2025-11-25T00:00:00.000000Z",
+        "created_at": "2025-11-25T00:25:44.000000Z",
+        "updated_at": "2025-11-25T00:25:44.000000Z",
+        "distributor": {
+            "id": 1,
+            "nama": "Distributor 1"
+        },
+        "user": {
+            "id": 1,
+            "nama": "User 1"
+        },
+        "purchase_order_details": [
+            {
+                "id": 1,
+                "product_id": 1,
+                "harga_pokok": 10000,
+                "jumlah": 10,
+                "subtotal": 100000,
+                "product": {
+                    "id": 1,
+                    "nama": "Product 1"
+                }
+            }
+        ]
+    }
+}
+```
+
+### POST /purchase-order
+
+Create a new purchase order with batch items.
+
+#### Parameters
+
+| Name           | Type    | Default Value |
+| -------------- | ------- | ------------- |
+| distributor_id | integer | required      |
+| user_id        | integer | required      |
+| ppn            | numeric | required      |
+| diskon         | numeric | required      |
+| transaction_at | date    | required      |
+| items          | array   | required      |
+| items.*.product_id | integer | required      |
+| items.*.harga_pokok | numeric | required      |
+| items.*.jumlah | integer | required      |
+
+#### Response
+
+```json
+{
+    "message": "Purchase order created successfully"
+}
+```
+
+### PUT /purchase-order/{id}
+
+Update a purchase order. Items are optional; if provided, existing details will be replaced.
+
+#### Parameters
+
+| Name           | Type    | Default Value             |
+| -------------- | ------- | ------------------------- |
+| distributor_id | integer | null                      |
+| user_id        | integer | null                      |
+| ppn            | numeric | null                      |
+| diskon         | numeric | null                      |
+| status         | string  | null (pending, completed, cancelled) |
+| transaction_at | date    | null                      |
+| items          | array   | null                      |
+| items.*.product_id | integer | required if items        |
+| items.*.harga_pokok | numeric | required if items        |
+| items.*.jumlah | integer | required if items        |
+
+#### Response
+
+```json
+{
+    "message": "Purchase order updated successfully"
+}
+```
+
+### DELETE /purchase-order/{id}
+
+Delete a purchase order.
+
+#### Parameters
+
+None
+
+#### Response
+
+```json
+{
+    "message": "Purchase order deleted successfully"
+}
+```
