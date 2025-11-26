@@ -5,9 +5,12 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class SalesTransaction extends Model
 {
+    use SoftDeletes;
+
     const STATUS_PENDING = 'pending';
 
     const STATUS_COMPLETED = 'completed';
