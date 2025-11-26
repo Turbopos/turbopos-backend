@@ -478,14 +478,14 @@ Create a new customer transport.
 
 #### Parameters
 
-| Name            | Type    | Default Value                 |
-| --------------- | ------- | ----------------------------- |
-| customer_id     | integer | required                      |
-| nama            | string  | required                      |
-| jenis_kendaraan | string  | required                      |
-| merk            | string  | required                      |
-| no_polisi       | string  | required                      |
-| sn              | string  | null                          |
+| Name            | Type    | Default Value |
+| --------------- | ------- | ------------- |
+| customer_id     | integer | required      |
+| nama            | string  | required      |
+| jenis_kendaraan | string  | required      |
+| merk            | string  | required      |
+| no_polisi       | string  | required      |
+| sn              | string  | null          |
 
 #### Response
 
@@ -511,14 +511,14 @@ Update a customer transport.
 
 #### Parameters
 
-| Name            | Type    | Default Value             |
-| --------------- | ------- | ------------------------- |
-| customer_id     | integer | null                      |
-| nama            | string  | null                      |
-| jenis_kendaraan | string  | null                      |
-| merk            | string  | null                      |
-| no_polisi       | string  | null                      |
-| sn              | string  | null                      |
+| Name            | Type    | Default Value |
+| --------------- | ------- | ------------- |
+| customer_id     | integer | null          |
+| nama            | string  | null          |
+| jenis_kendaraan | string  | null          |
+| merk            | string  | null          |
+| no_polisi       | string  | null          |
+| sn              | string  | null          |
 
 #### Response
 
@@ -694,13 +694,13 @@ Get list of products with optional filters and pagination.
 
 #### Parameters
 
-| Name           | Type    | Default Value             |
-| -------------- | ------- | ------------------------- |
-| jenis          | string  | null (barang, jasa)       |
-| category_id    | integer | null                      |
-| distributor_id | integer | null                      |
-| search         | string  | null                      |
-| limit          | integer | 10                        |
+| Name           | Type    | Default Value       |
+| -------------- | ------- | ------------------- |
+| jenis          | string  | null (barang, jasa) |
+| category_id    | integer | null                |
+| distributor_id | integer | null                |
+| search         | string  | null                |
+| limit          | integer | 10                  |
 
 #### Response
 
@@ -764,14 +764,14 @@ Create a new product. Requires admin role.
 
 #### Parameters
 
-| Name           | Type    | Default Value |
-| -------------- | ------- | ------------- |
-| jenis          | string  | required (barang, jasa) |
-| category_id    | integer | required      |
-| nama           | string  | required      |
-| distributor_id | integer | null          |
+| Name           | Type    | Default Value            |
+| -------------- | ------- | ------------------------ |
+| jenis          | string  | required (barang, jasa)  |
+| category_id    | integer | required                 |
+| nama           | string  | required                 |
+| distributor_id | integer | null                     |
 | harga_pokok    | numeric | required if jenis=barang |
-| harga_jual     | numeric | required      |
+| harga_jual     | numeric | required                 |
 | stok           | integer | required if jenis=barang |
 | satuan         | string  | required if jenis=barang |
 
@@ -803,16 +803,16 @@ Update a product. Requires admin role.
 
 #### Parameters
 
-| Name           | Type    | Default Value         |
-| -------------- | ------- | --------------------- |
-| jenis          | string  | null (barang, jasa)   |
-| category_id    | integer | null                  |
-| nama           | string  | null                  |
-| distributor_id | integer | null                  |
-| harga_pokok    | numeric | null                  |
-| harga_jual     | numeric | null                  |
-| stok           | integer | null                  |
-| satuan         | string  | null                  |
+| Name           | Type    | Default Value       |
+| -------------- | ------- | ------------------- |
+| jenis          | string  | null (barang, jasa) |
+| category_id    | integer | null                |
+| nama           | string  | null                |
+| distributor_id | integer | null                |
+| harga_pokok    | numeric | null                |
+| harga_jual     | numeric | null                |
+| stok           | integer | null                |
+| satuan         | string  | null                |
 
 #### Response
 
@@ -860,15 +860,15 @@ Get list of purchase orders with optional filters and pagination, sorted by tran
 
 #### Parameters
 
-| Name               | Type    | Default Value |
-| ------------------ | ------- | ------------- |
-| status             | string  | null (pending, completed, cancelled) |
-| distributor_id     | integer | null          |
-| user_id            | integer | null          |
-| search             | string  | null          |
-| transaction_at_from| date    | null          |
-| transaction_at_to  | date    | null          |
-| limit              | integer | 10            |
+| Name                | Type    | Default Value                        |
+| ------------------- | ------- | ------------------------------------ |
+| status              | string  | null (pending, completed, cancelled) |
+| distributor_id      | integer | null                                 |
+| user_id             | integer | null                                 |
+| search              | string  | null                                 |
+| transaction_at_from | date    | null                                 |
+| transaction_at_to   | date    | null                                 |
+| limit               | integer | 10                                   |
 
 #### Response
 
@@ -896,7 +896,7 @@ Get list of purchase orders with optional filters and pagination, sorted by tran
                 "id": 1,
                 "nama": "User 1"
             },
-            "purchase_order_details": [
+            "details": [
                 {
                     "id": 1,
                     "product_id": 1,
@@ -951,7 +951,7 @@ None
             "id": 1,
             "nama": "User 1"
         },
-        "purchase_order_details": [
+        "details": [
             {
                 "id": 1,
                 "product_id": 1,
@@ -976,19 +976,19 @@ Create a new purchase order with batch items.
 
 #### Parameters
 
-| Name           | Type    | Default Value |
-| -------------- | ------- | ------------- |
-| distributor_id | integer | required      |
-| user_id        | integer | required      |
-| ppn            | numeric | required      |
-| diskon         | numeric | required      |
-| transaction_at | date    | required      |
-| items          | array   | required      |
-| items.*.product_id | integer | required      |
-| items.*.harga_pokok | numeric | required      |
-| items.*.jumlah | integer | required      |
-| items.*.ppn | numeric | required      |
-| items.*.diskon | numeric | required      |
+| Name                 | Type    | Default Value |
+| -------------------- | ------- | ------------- |
+| distributor_id       | integer | required      |
+| user_id              | integer | required      |
+| ppn                  | numeric | required      |
+| diskon               | numeric | required      |
+| transaction_at       | date    | required      |
+| items                | array   | required      |
+| items.\*.product_id  | integer | required      |
+| items.\*.harga_pokok | integer | required      |
+| items.\*.jumlah      | integer | required      |
+| items.\*.ppn         | numeric | required      |
+| items.\*.diskon      | numeric | required      |
 
 #### Response
 
@@ -1004,20 +1004,20 @@ Update a purchase order. Items are optional; if provided, existing details will 
 
 #### Parameters
 
-| Name           | Type    | Default Value             |
-| -------------- | ------- | ------------------------- |
-| distributor_id | integer | null                      |
-| user_id        | integer | null                      |
-| ppn            | numeric | null                      |
-| diskon         | numeric | null                      |
-| status         | string  | null (pending, completed, cancelled) |
-| transaction_at | date    | null                      |
-| items          | array   | null                      |
-| items.*.product_id | integer | required if items        |
-| items.*.harga_pokok | numeric | required if items        |
-| items.*.jumlah | integer | required if items        |
-| items.*.ppn | numeric | required if items        |
-| items.*.diskon | numeric | required if items        |
+| Name                 | Type    | Default Value                        |
+| -------------------- | ------- | ------------------------------------ |
+| distributor_id       | integer | null                                 |
+| user_id              | integer | null                                 |
+| ppn                  | numeric | null                                 |
+| diskon               | numeric | null                                 |
+| status               | string  | null (pending, completed, cancelled) |
+| transaction_at       | date    | null                                 |
+| items                | array   | null                                 |
+| items.\*.product_id  | integer | required if items                    |
+| items.\*.harga_pokok | integer | required if items                    |
+| items.\*.jumlah      | integer | required if items                    |
+| items.\*.ppn         | numeric | required if items                    |
+| items.\*.diskon      | numeric | required if items                    |
 
 #### Response
 
@@ -1033,8 +1033,8 @@ Update status of a purchase order.
 
 #### Parameters
 
-| Name   | Type   | Default Value             |
-| ------ | ------ | ------------------------- |
+| Name   | Type   | Default Value                            |
+| ------ | ------ | ---------------------------------------- |
 | status | string | required (pending, completed, cancelled) |
 
 #### Response
@@ -1069,15 +1069,15 @@ Get list of sales transactions with optional filters and pagination, sorted by t
 
 #### Parameters
 
-| Name               | Type    | Default Value |
-| ------------------ | ------- | ------------- |
-| status             | string  | null (pending, completed, cancelled) |
-| customer_id        | integer | null          |
-| user_id            | integer | null          |
-| search             | string  | null          |
-| transaction_at_from| date    | null          |
-| transaction_at_to  | date    | null          |
-| limit              | integer | 10            |
+| Name                | Type    | Default Value                        |
+| ------------------- | ------- | ------------------------------------ |
+| status              | string  | null (pending, completed, cancelled) |
+| customer_id         | integer | null                                 |
+| user_id             | integer | null                                 |
+| search              | string  | null                                 |
+| transaction_at_from | date    | null                                 |
+| transaction_at_to   | date    | null                                 |
+| limit               | integer | 10                                   |
 
 #### Response
 
@@ -1189,18 +1189,18 @@ Create a new sales transaction with batch items.
 
 #### Parameters
 
-| Name           | Type    | Default Value |
-| -------------- | ------- | ------------- |
-| customer_id    | integer | required      |
-| user_id        | integer | required      |
-| ppn            | numeric | required      |
-| diskon         | numeric | required      |
-| transaction_at | date    | required      |
-| items          | array   | required      |
-| items.*.product_id | integer | required      |
-| items.*.jumlah | integer | required      |
-| items.*.ppn    | numeric | required      |
-| items.*.diskon | numeric | required      |
+| Name                | Type    | Default Value |
+| ------------------- | ------- | ------------- |
+| customer_id         | integer | required      |
+| user_id             | integer | required      |
+| ppn                 | numeric | required      |
+| diskon              | numeric | required      |
+| transaction_at      | date    | required      |
+| items               | array   | required      |
+| items.\*.product_id | integer | required      |
+| items.\*.jumlah     | integer | required      |
+| items.\*.ppn        | numeric | required      |
+| items.\*.diskon     | numeric | required      |
 
 #### Response
 
@@ -1216,8 +1216,8 @@ Update status of a sales transaction.
 
 #### Parameters
 
-| Name   | Type   | Default Value             |
-| ------ | ------ | ------------------------- |
+| Name   | Type   | Default Value                            |
+| ------ | ------ | ---------------------------------------- |
 | status | string | required (pending, completed, cancelled) |
 
 #### Response
