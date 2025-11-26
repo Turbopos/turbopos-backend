@@ -43,7 +43,7 @@ class SalesTransaction extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function salesTransactionDetails(): HasMany
+    public function details(): HasMany
     {
         return $this->hasMany(SalesTransactionDetail::class);
     }

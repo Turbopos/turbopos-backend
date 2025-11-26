@@ -49,7 +49,7 @@ class PurchaseOrderController extends Controller
 
     public function show($id)
     {
-        $purchaseOrder = PurchaseOrder::with(['distributor', 'user', 'purchaseOrderDetails.product'])->findOrFail($id);
+        $purchaseOrder = PurchaseOrder::with(['distributor', 'user', 'details', 'details.product'])->findOrFail($id);
         return response()->json(['purchase_order' => $purchaseOrder]);
     }
 

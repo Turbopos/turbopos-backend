@@ -43,7 +43,7 @@ class PurchaseOrder extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function purchaseOrderDetails(): HasMany
+    public function details(): HasMany
     {
         return $this->hasMany(PurchaseOrderDetail::class);
     }
