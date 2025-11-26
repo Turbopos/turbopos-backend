@@ -23,7 +23,7 @@ class CustomerTransportController extends Controller
                     ->orWhere('merk', 'like', '%' . $search . '%')
                     ->orWhere('no_polisi', 'like', '%' . $search . '%')
                     ->orWhereHas('customer', function ($q) use ($search) {
-                        $q->where('name', 'like', '%' . $search . '%');
+                        $q->where('nama', 'like', '%' . $search . '%');
                     });
             });
         }
