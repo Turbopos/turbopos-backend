@@ -14,7 +14,7 @@ class ProductController extends Controller
 
     public function index(Request $request)
     {
-        $query = Product::query();
+        $query = Product::query()->with(['category', 'distributor']);
 
         if ($request->jenis) {
             $query->where('jenis', $request->jenis);

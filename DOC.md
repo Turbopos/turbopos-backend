@@ -418,12 +418,11 @@ Get list of customer transports with optional filters and pagination.
 
 #### Parameters
 
-| Name            | Type    | Default Value             |
-| --------------- | ------- | ------------------------- |
-| customer_id     | integer | null                      |
-| jenis_kendaraan | string  | null (mobil, motor, truk) |
-| search          | string  | null                      |
-| limit           | integer | 10                        |
+| Name        | Type    | Default Value |
+| ----------- | ------- | ------------- |
+| customer_id | integer | null          |
+| search      | string  | null          |
+| limit       | integer | 10            |
 
 #### Response
 
@@ -483,7 +482,7 @@ Create a new customer transport.
 | --------------- | ------- | ----------------------------- |
 | customer_id     | integer | required                      |
 | nama            | string  | required                      |
-| jenis_kendaraan | string  | required (mobil, motor, truk) |
+| jenis_kendaraan | string  | required                      |
 | merk            | string  | required                      |
 | no_polisi       | string  | required                      |
 | sn              | string  | null                          |
@@ -516,7 +515,7 @@ Update a customer transport.
 | --------------- | ------- | ------------------------- |
 | customer_id     | integer | null                      |
 | nama            | string  | null                      |
-| jenis_kendaraan | string  | null (mobil, motor, truk) |
+| jenis_kendaraan | string  | null                      |
 | merk            | string  | null                      |
 | no_polisi       | string  | null                      |
 | sn              | string  | null                      |

@@ -15,16 +15,16 @@ class CustomerTransportController extends Controller
             $query->where('customer_id', $request->customer_id);
         }
 
-        if ($request->jenis_kendaraan) {
-            $query->where('jenis_kendaraan', $request->jenis_kendaraan);
-        }
-
         if ($request->search) {
             $search = $request->search;
             $query->where(function ($q) use ($search) {
                 $q->where('nama', 'like', '%' . $search . '%')
+                    ->orWhere('jenis_kendaraan', 'like', '%' . $search . '%')
                     ->orWhere('merk', 'like', '%' . $search . '%')
-                    ->orWhere('no_polisi', 'like', '%' . $search . '%');
+                    ->orWhere('no_polisi', 'like', '%' . $search . '%')
+                    ->orWhereHas('customer', function ($q) use ($search) {
+                        $q->where('name', 'like', '%' . $search . '%');
+                    });
             });
         }
 
@@ -45,7 +45,7 @@ class CustomerTransportController extends Controller
         $request->validate([
             'customer_id' => 'required|exists:customers,id',
             'nama' => 'required|string',
-            'jenis_kendaraan' => 'required|in:mobil,motor,truk',
+            'jenis_kendaraan' => 'required|string',
             'merk' => 'required|string',
             'no_polisi' => 'required|string',
             'sn' => 'nullable|string',
@@ -63,7 +63,7 @@ class CustomerTransportController extends Controller
         $request->validate([
             'customer_id' => 'sometimes|exists:customers,id',
             'nama' => 'sometimes|string',
-            'jenis_kendaraan' => 'sometimes|in:mobil,motor,truk',
+            'jenis_kendaraan' => 'sometimes|string',
             'merk' => 'sometimes|string',
             'no_polisi' => 'sometimes|string',
             'sn' => 'nullable|string',
