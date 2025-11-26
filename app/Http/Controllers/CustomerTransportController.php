@@ -9,7 +9,7 @@ class CustomerTransportController extends Controller
 {
     public function index(Request $request)
     {
-        $query = CustomerTransport::query();
+        $query = CustomerTransport::query()->with(['customer']);
 
         if ($request->customer_id) {
             $query->where('customer_id', $request->customer_id);
@@ -36,7 +36,7 @@ class CustomerTransportController extends Controller
 
     public function show($id)
     {
-        $transport = CustomerTransport::findOrFail($id);
+        $transport = CustomerTransport::with(['customer'])->findOrFail($id);
         return response()->json(['transport' => $transport]);
     }
 
