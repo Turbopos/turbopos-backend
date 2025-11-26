@@ -35,8 +35,12 @@ trait BarcodeController
         $renderer = new PngRenderer();
 
         $randomFilename = uniqid() . '-' . time() . '.png';
+        $dirPath = public_path('storage/barcodes');
 
-        mkdir(public_path('barcodes'), 0777, true);
+        if (!file_exists($dirPath)) {
+            mkdir($dirPath, 0777, true);
+        }
+
         $filePath = '/barcodes/' . $randomFilename;
 
         file_put_contents(public_path($filePath), $renderer->render($barcode, $barcode->getWidth() * 3, 50));

@@ -44,7 +44,7 @@ class ProductController extends Controller
 
     public function show($id)
     {
-        $product = Product::findOrFail($id);
+        $product = Product::with(['category', 'distributor'])->findOrFail($id);
         return response()->json(['product' => $product]);
     }
 
@@ -62,7 +62,7 @@ class ProductController extends Controller
         ]);
 
         $data = $request->all();
-        $data['kode'] = uniqid();
+        $data['kode'] = uniqid($this->_prefix($data['jenis']));
         $data['barcode'] = $this->generateBarcode(new BarcodeItem($data['kode'], $this->barcode_type));
 
         $product = Product::create($this->_cleanData($data));
@@ -90,7 +90,6 @@ class ProductController extends Controller
         }
 
         $data = $request->all();
-        $data['barcode'] = $this->generateBarcode(new BarcodeItem($product->kode, $this->barcode_type));
 
         $product->update($this->_cleanData($data));
 
@@ -110,12 +109,19 @@ class ProductController extends Controller
         return response()->json(['message' => 'Product deleted successfully']);
     }
 
-    private function _cleanData($data)
+    private function _cleanData(array $data)
     {
         if ($data['jenis'] == Product::JENIS_JASA) {
             $data['harga_pokok'] = null;
             $data['stok'] = null;
             $data['satuan'] = null;
         }
+
+        return $data;
+    }
+
+    private function _prefix(string $jenis)
+    {
+        return $jenis == 'barang' ? 'B-' : 'J-';
     }
 }
