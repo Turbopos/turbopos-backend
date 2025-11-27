@@ -12,7 +12,7 @@ class SalesTransactionController extends Controller
 {
     public function index(Request $request)
     {
-        $query = SalesTransaction::with(['customer', 'user', 'salesTransactionDetails.product']);
+        $query = SalesTransaction::with(['customer', 'user', 'details']);
 
         if ($request->status) {
             $query->where('status', $request->status);
@@ -140,3 +140,4 @@ class SalesTransactionController extends Controller
         return response()->json(['message' => 'Sales transaction status updated successfully']);
     }
 }
+

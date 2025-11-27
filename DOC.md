@@ -1004,20 +1004,19 @@ Update a purchase order. Items are optional; if provided, existing details will 
 
 #### Parameters
 
-| Name                 | Type    | Default Value                        |
-| -------------------- | ------- | ------------------------------------ |
-| distributor_id       | integer | null                                 |
-| user_id              | integer | null                                 |
-| ppn                  | numeric | null                                 |
-| diskon               | numeric | null                                 |
-| status               | string  | null (pending, completed, cancelled) |
-| transaction_at       | date    | null                                 |
-| items                | array   | null                                 |
-| items.\*.product_id  | integer | required if items                    |
-| items.\*.harga_pokok | integer | required if items                    |
-| items.\*.jumlah      | integer | required if items                    |
-| items.\*.ppn         | numeric | required if items                    |
-| items.\*.diskon      | numeric | required if items                    |
+| Name                 | Type    | Default Value     |
+| -------------------- | ------- | ----------------- |
+| distributor_id       | integer | null              |
+| user_id              | integer | null              |
+| ppn                  | numeric | null              |
+| diskon               | numeric | null              |
+| transaction_at       | date    | null              |
+| items                | array   | null              |
+| items.\*.product_id  | integer | required if items |
+| items.\*.harga_pokok | integer | required if items |
+| items.\*.jumlah      | integer | required if items |
+| items.\*.ppn         | numeric | required if items |
+| items.\*.diskon      | numeric | required if items |
 
 #### Response
 
