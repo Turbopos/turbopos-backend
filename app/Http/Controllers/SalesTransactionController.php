@@ -51,7 +51,7 @@ class SalesTransactionController extends Controller
 
     public function show($id)
     {
-        $salesTransaction = SalesTransaction::with(['customer', 'user', 'salesTransactionDetails.product'])->findOrFail($id);
+        $salesTransaction = SalesTransaction::with(['customer', 'user', 'details', 'details.product'])->findOrFail($id);
         return response()->json(['sales_transaction' => $salesTransaction]);
     }
 
