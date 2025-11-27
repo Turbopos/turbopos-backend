@@ -103,6 +103,7 @@ class SalesTransactionController extends Controller
             $salesTransaction = SalesTransaction::create([
                 'kode' => uniqid('ST-'),
                 'customer_id' => $request->customer_id,
+                'transport_id' => $request->transport_id,
                 'user_id' => Auth::id(),
                 'ppn' => $ppn,
                 'subtotal' => $subtotal,
@@ -182,11 +183,9 @@ class SalesTransactionController extends Controller
                 'total' => $total,
             ]);
 
-            $salesTransaction->salesTransactionDetails()->delete();
+            $salesTransaction->details()->delete();
 
             foreach ($items as $item) {
-                dd($item);
-
                 SalesTransactionDetail::create([
                     'sales_transaction_id' => $salesTransaction->id,
                     'product_id' => $item['product_id'],

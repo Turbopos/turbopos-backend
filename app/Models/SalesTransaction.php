@@ -20,6 +20,7 @@ class SalesTransaction extends Model
     protected $fillable = [
         'kode',
         'customer_id',
+        'transport_id',
         'user_id',
         'ppn',
         'subtotal',
