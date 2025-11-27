@@ -7,6 +7,7 @@ use App\Http\Controllers\CustomerTransportController;
 use App\Http\Controllers\DistributorController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\PurchaseOrderController;
+use App\Http\Controllers\ReportController;
 use App\Http\Controllers\SalesTransactionController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
@@ -29,5 +30,8 @@ Route::middleware(['jwt.auth', 'verify.user.exists'])->group(function () {
     Route::prefix('/report')->group(function () {
         Route::get('/purchase-order', [PurchaseOrderController::class, 'report']);
         Route::get('/sales-transaction', [SalesTransactionController::class, 'report']);
+        Route::get('/profit-loss-item', [ReportController::class, 'profitLossItem']);
+        Route::get('/profit-loss-category', [ReportController::class, 'profitLossCategory']);
+        Route::get('/stock', [ReportController::class, 'stockReport']);
     });
 });
