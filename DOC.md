@@ -1192,20 +1192,47 @@ Create a new sales transaction with batch items.
 | ------------------- | ------- | ------------- |
 | customer_id         | integer | required      |
 | user_id             | integer | required      |
-| ppn                 | numeric | required      |
-| diskon              | numeric | required      |
-| transaction_at      | date    | required      |
+| ppn                 | numeric | 0             |
+| diskon              | numeric | 0             |
+| transaction_at      | date    | now           |
 | items               | array   | required      |
 | items.\*.product_id | integer | required      |
 | items.\*.jumlah     | integer | required      |
-| items.\*.ppn        | numeric | required      |
-| items.\*.diskon     | numeric | required      |
+| items.\*.ppn        | numeric | 0             |
+| items.\*.diskon     | numeric | 0             |
 
 #### Response
 
 ```json
 {
     "message": "Sales transaction created successfully"
+}
+```
+
+### PUT /sales-transaction/{id}
+
+Update a sales transaction. Existing details will be replaced with new items.
+
+#### Parameters
+
+| Name                | Type    | Default Value |
+| ------------------- | ------- | ------------- |
+| customer_id         | integer | required      |
+| user_id             | integer | required      |
+| ppn                 | numeric | 0             |
+| diskon              | numeric | 0             |
+| transaction_at      | date    | now           |
+| items               | array   | required      |
+| items.\*.product_id | integer | required      |
+| items.\*.jumlah     | integer | required      |
+| items.\*.ppn        | numeric | 0             |
+| items.\*.diskon     | numeric | 0             |
+
+#### Response
+
+```json
+{
+    "message": "Sales transaction updated successfully"
 }
 ```
 

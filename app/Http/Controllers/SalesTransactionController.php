@@ -5,7 +5,9 @@ namespace App\Http\Controllers;
 use App\Models\Product;
 use App\Models\SalesTransaction;
 use App\Models\SalesTransactionDetail;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class SalesTransactionController extends Controller
@@ -57,15 +59,14 @@ class SalesTransactionController extends Controller
     {
         $request->validate([
             'customer_id' => 'required|exists:customers,id',
-            'user_id' => 'required|exists:users,id',
-            'ppn' => 'required|numeric|min:0',
-            'diskon' => 'required|numeric|min:0',
-            'transaction_at' => 'required|date',
+            'ppn' => 'nullable|numeric|min:0',
+            'diskon' => 'nullable|numeric|min:0',
+            'transaction_at' => 'nullable|date',
             'items' => 'required|array|min:1',
             'items.*.product_id' => 'required|exists:products,id',
             'items.*.jumlah' => 'required|integer|min:1',
-            'items.*.ppn' => 'required|numeric|min:0',
-            'items.*.diskon' => 'required|numeric|min:0',
+            'items.*.ppn' => 'nullable|numeric|min:0',
+            'items.*.diskon' => 'nullable|numeric|min:0',
         ]);
 
         DB::transaction(function () use ($request) {
@@ -80,25 +81,34 @@ class SalesTransactionController extends Controller
                 $items[$i]['harga_jual'] = $product->harga_jual;
                 $items[$i]['subtotal'] = $product->harga_jual * $item['jumlah'];
 
-                $ppn = $items[$i]['subtotal'] * ($item['ppn'] / 100);
-                $diskon = $items[$i]['subtotal'] * ($item['diskon'] / 100);
+                $ppn = @$item['ppn'] ?? 0;
+                $diskon = @$item['diskon'] ?? 0;
 
-                $items[$i]['total'] = $items[$i]['subtotal'] + $ppn - $diskon;
+                $ppnValue = $items[$i]['subtotal'] * ($ppn / 100);
+                $diskonValue = $items[$i]['subtotal'] * ($diskon / 100);
+
+                $items[$i]['total'] = $items[$i]['subtotal'] + $ppnValue - $diskonValue;
                 $subtotal += $items[$i]['total'];
             }
 
-            $total = $subtotal + $request->ppn - $request->diskon;
+            $ppn = $request->ppn ?? 0;
+            $diskon = $request->diskon ?? 0;
+
+            $ppnValue = $subtotal * ($ppn / 100);
+            $diskonValue = $subtotal * ($diskon / 100);
+
+            $total = $subtotal + $ppnValue - $diskonValue;
 
             $salesTransaction = SalesTransaction::create([
                 'kode' => uniqid('ST-'),
                 'customer_id' => $request->customer_id,
-                'user_id' => $request->user_id,
-                'ppn' => $request->ppn,
+                'user_id' => Auth::id(),
+                'ppn' => $ppn,
                 'subtotal' => $subtotal,
-                'diskon' => $request->diskon,
+                'diskon' => $diskon,
                 'total' => $total,
                 'status' => SalesTransaction::STATUS_PENDING,
-                'transaction_at' => $request->transaction_at,
+                'transaction_at' => $request->transaction_at ?? Carbon::now(),
             ]);
 
             foreach ($items as $item) {
@@ -109,14 +119,86 @@ class SalesTransactionController extends Controller
                     'harga_jual' => $item['harga_jual'],
                     'jumlah' => $item['jumlah'],
                     'subtotal' => $item['subtotal'],
-                    'ppn' => $item['ppn'],
-                    'diskon' => $item['diskon'],
+                    'ppn' => @$item['ppn'] ?? 0,
+                    'diskon' => @$item['diskon'] ?? 0,
                     'total' => $item['total'],
                 ]);
             }
         });
 
         return response()->json(['message' => 'Sales transaction created successfully'], 201);
+    }
+
+    public function update(Request $request, $id)
+    {
+        $request->validate([
+            'ppn' => 'nullable|numeric|min:0',
+            'diskon' => 'nullable|numeric|min:0',
+            'items' => 'required|array|min:1',
+            'items.*.product_id' => 'required|exists:products,id',
+            'items.*.jumlah' => 'required|integer|min:1',
+            'items.*.ppn' => 'nullable|numeric|min:0',
+            'items.*.diskon' => 'nullable|numeric|min:0',
+        ]);
+
+        DB::transaction(function () use ($request, $id) {
+            $salesTransaction = SalesTransaction::findOrFail($id);
+
+            $products = Product::whereIn('id', collect($request->items)->pluck('product_id')->toArray())->get();
+            $items = $request->items;
+
+            $subtotal = 0;
+            foreach ($items as $i => $item) {
+                $product = $products->where('id', $item['product_id'])->first();
+
+                $items[$i]['harga_pokok'] = $product->harga_pokok;
+                $items[$i]['harga_jual'] = $product->harga_jual;
+                $items[$i]['subtotal'] = $product->harga_jual * $item['jumlah'];
+
+                $ppn = @$item['ppn'] ?? 0;
+                $diskon = @$item['diskon'] ?? 0;
+
+                $ppnValue = $items[$i]['subtotal'] * ($ppn / 100);
+                $diskonValue = $items[$i]['subtotal'] * ($diskon / 100);
+
+                $items[$i]['total'] = $items[$i]['subtotal'] + $ppnValue - $diskonValue;
+                $subtotal += $items[$i]['total'];
+            }
+
+            $ppn = $request->ppn ?? 0;
+            $diskon = $request->diskon ?? 0;
+
+            $ppnValue = $subtotal * ($ppn / 100);
+            $diskonValue = $subtotal * ($diskon / 100);
+
+            $total = $subtotal + $ppnValue - $diskonValue;
+
+            $salesTransaction->update([
+                'user_id' => Auth::id(),
+                'ppn' => $ppn,
+                'subtotal' => $subtotal,
+                'diskon' => $diskon,
+                'total' => $total,
+            ]);
+
+            $salesTransaction->salesTransactionDetails()->delete();
+
+            foreach ($items as $item) {
+                SalesTransactionDetail::create([
+                    'sales_transaction_id' => $salesTransaction->id,
+                    'product_id' => $item['product_id'],
+                    'harga_pokok' => $item['harga_pokok'],
+                    'harga_jual' => $item['harga_jual'],
+                    'jumlah' => $item['jumlah'],
+                    'subtotal' => $item['subtotal'],
+                    'ppn' => @$item['ppn'] ?? 0,
+                    'diskon' => @$item['diskon'] ?? 0,
+                    'total' => $item['total'],
+                ]);
+            }
+        });
+
+        return response()->json(['message' => 'Sales transaction updated successfully']);
     }
 
     public function destroy($id)
@@ -140,4 +222,3 @@ class SalesTransactionController extends Controller
         return response()->json(['message' => 'Sales transaction status updated successfully']);
     }
 }
-
