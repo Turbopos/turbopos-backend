@@ -23,7 +23,11 @@ Route::middleware(['jwt.auth', 'verify.user.exists'])->group(function () {
     Route::resource('/product', ProductController::class, ['except' => ['create']]);
     Route::resource('/purchase-order', PurchaseOrderController::class, ['except' => ['create', 'edit']]);
     Route::put('/purchase-order/{id}/status', [PurchaseOrderController::class, 'updateStatus']);
-    Route::get('/report/purchase-order', [PurchaseOrderController::class, 'report']);
     Route::resource('/sales-transaction', SalesTransactionController::class, ['expect' => ['create', 'edit']]);
     Route::put('/sales-transaction/{id}/status', [SalesTransactionController::class, 'updateStatus']);
+
+    Route::prefix('/report')->group(function () {
+        Route::get('/purchase-order', [PurchaseOrderController::class, 'report']);
+        Route::get('/sales-transaction', [SalesTransactionController::class, 'report']);
+    });
 });

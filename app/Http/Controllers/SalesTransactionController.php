@@ -223,4 +223,51 @@ class SalesTransactionController extends Controller
 
         return response()->json(['message' => 'Sales transaction status updated successfully']);
     }
+
+    public function report(Request $request)
+    {
+        $request->validate([
+            'month' => 'nullable|date_format:Y-m',
+            'category_id' => 'nullable|exists:categories,id',
+        ]);
+
+        $query = SalesTransactionDetail::with('product', 'salesTransaction')
+            ->whereHas('salesTransaction', function ($q) use ($request) {
+                if ($request->month) {
+                    $q->whereYear('transaction_at', '=', date('Y', strtotime($request->month)))
+                        ->whereMonth('transaction_at', '=', date('m', strtotime($request->month)));
+                }
+            })
+            ->whereHas('product', function ($q) use ($request) {
+                if ($request->category_id) {
+                    $q->where('category_id', $request->category_id);
+                }
+            });
+
+        $details = $query->get();
+
+        $aggregated = $details->groupBy('product_id')->map(function ($group) {
+            $product = $group->first()->product;
+            $totalJumlah = $group->sum('jumlah');
+            $hargaJual = $group->first()->harga_jual;
+            $subTotal = $group->sum('subtotal');
+            $total = $group->sum('total');
+
+            return [
+                'nama_barang' => $product->nama,
+                'jumlah' => $totalJumlah,
+                'satuan' => $product->satuan,
+                'harga_jual' => $hargaJual,
+                'sub_total' => $subTotal,
+                'total' => $total,
+            ];
+        });
+
+        $totalKeseluruhan = $aggregated->sum('total');
+
+        return response()->json([
+            'report' => $aggregated->values(),
+            'total_keseluruhan' => $totalKeseluruhan,
+        ]);
+    }
 }

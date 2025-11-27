@@ -243,7 +243,7 @@ class PurchaseOrderController extends Controller
 
             return [
                 'nama_barang' => $product->nama,
-                'jml' => $totalJumlah,
+                'jumlah' => $totalJumlah,
                 'satuan' => $product->satuan,
                 'harga_pokok' => $hargaPokok,
                 'sub_total' => $subTotal,
