@@ -1191,7 +1191,6 @@ Create a new sales transaction with batch items.
 | Name                | Type    | Default Value |
 | ------------------- | ------- | ------------- |
 | customer_id         | integer | required      |
-| user_id             | integer | required      |
 | ppn                 | numeric | 0             |
 | diskon              | numeric | 0             |
 | transaction_at      | date    | now           |
@@ -1218,10 +1217,8 @@ Update a sales transaction. Existing details will be replaced with new items.
 | Name                | Type    | Default Value |
 | ------------------- | ------- | ------------- |
 | customer_id         | integer | required      |
-| user_id             | integer | required      |
 | ppn                 | numeric | 0             |
 | diskon              | numeric | 0             |
-| transaction_at      | date    | now           |
 | items               | array   | required      |
 | items.\*.product_id | integer | required      |
 | items.\*.jumlah     | integer | required      |
