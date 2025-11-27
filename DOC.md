@@ -1261,3 +1261,139 @@ None
     "message": "Sales transaction deleted successfully"
 }
 ```
+
+## Reports
+
+### GET /report/purchase-order
+
+Get purchase order report aggregated by product, filtered by month and/or distributor.
+
+#### Parameters
+
+| Name           | Type    | Default Value |
+| -------------- | ------- | ------------- |
+| month          | string  | null          |
+| distributor_id | integer | null          |
+
+#### Response
+
+```json
+{
+    "report": [
+        {
+            "nama_barang": "Product 1",
+            "jml": 100,
+            "satuan": "pcs",
+            "harga_pokok": 10000,
+            "sub_total": 1000000
+        }
+    ],
+    "total_keseluruhan": 1000000
+}
+```
+
+### GET /report/sales-transaction
+
+Get sales transaction report aggregated by product, filtered by month and/or category.
+
+#### Parameters
+
+| Name        | Type    | Default Value |
+| ----------- | ------- | ------------- |
+| month       | string  | null          |
+| category_id | integer | null          |
+
+#### Response
+
+```json
+{
+    "report": [
+        {
+            "nama_barang": "Product 1",
+            "jml": 50,
+            "satuan": "pcs",
+            "harga_jual": 15000,
+            "sub_total": 750000
+        }
+    ],
+    "total_keseluruhan": 750000
+}
+```
+
+### GET /report/profit-loss-item
+
+Get profit/loss report per item, filtered by month.
+
+#### Parameters
+
+| Name  | Type   | Default Value |
+| ----- | ------ | ------------- |
+| month | string | null          |
+
+#### Response
+
+```json
+{
+    "report": [
+        {
+            "nama_barang": "Product 1",
+            "jml": 50,
+            "satuan": "pcs",
+            "harga_beli": 10000,
+            "harga_jual": 15000,
+            "laba_rugi": 250000
+        }
+    ],
+    "total_keseluruhan": 250000
+}
+```
+
+### GET /report/profit-loss-category
+
+Get profit/loss report per category, filtered by month.
+
+#### Parameters
+
+| Name  | Type   | Default Value |
+| ----- | ------ | ------------- |
+| month | string | null          |
+
+#### Response
+
+```json
+{
+    "report": [
+        {
+            "kategori": "Category 1",
+            "total_laba_rugi": 250000
+        }
+    ],
+    "total_keseluruhan": 250000
+}
+```
+
+### GET /report/stock
+
+Get stock report for products, with optional filters.
+
+#### Parameters
+
+| Name        | Type    | Default Value       |
+| ----------- | ------- | ------------------- |
+| category_id | integer | null                |
+| jenis       | string  | null (barang, jasa) |
+
+#### Response
+
+```json
+{
+    "report": [
+        {
+            "nama_barang": "Product 1",
+            "jml": 100,
+            "satuan": "pcs",
+            "stok": 100
+        }
+    ]
+}
+```
