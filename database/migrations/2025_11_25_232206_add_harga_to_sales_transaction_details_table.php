@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::table('sales_transaction_details', function (Blueprint $table) {
             $table->dropColumn('harga');
-            $table->float('harga_pokok');
-            $table->float('jual');
+            $table->float('harga_pokok')->nullable();
+            $table->float('harga_jual');
         });
     }
 
@@ -26,7 +26,7 @@ return new class extends Migration
         Schema::table('sales_transaction_details', function (Blueprint $table) {
             $table->float('harga');
             $table->dropColumn('harga_pokok');
-            $table->dropColumn('jual');
+            $table->dropColumn('harga_jual');
         });
     }
 };

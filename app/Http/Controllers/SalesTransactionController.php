@@ -51,14 +51,15 @@ class SalesTransactionController extends Controller
 
     public function show($id)
     {
-        $salesTransaction = SalesTransaction::with(['customer', 'user', 'details', 'details.product'])->findOrFail($id);
+        $salesTransaction = SalesTransaction::with(['customer', 'transport', 'user', 'details', 'details.product'])->findOrFail($id);
         return response()->json(['sales_transaction' => $salesTransaction]);
     }
 
     public function store(Request $request)
     {
         $request->validate([
-            'customer_id' => 'required|exists:customers,id',
+            'customer_id' => 'nullable|exists:customers,id',
+            'transport_id' => 'nullable|exists:customer_transports,id',
             'ppn' => 'nullable|numeric|min:0',
             'diskon' => 'nullable|numeric|min:0',
             'transaction_at' => 'nullable|date',
@@ -184,6 +185,8 @@ class SalesTransactionController extends Controller
             $salesTransaction->salesTransactionDetails()->delete();
 
             foreach ($items as $item) {
+                dd($item);
+
                 SalesTransactionDetail::create([
                     'sales_transaction_id' => $salesTransaction->id,
                     'product_id' => $item['product_id'],

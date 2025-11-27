@@ -38,6 +38,11 @@ class SalesTransaction extends Model
         return $this->belongsTo(Customer::class);
     }
 
+    public function transport(): BelongsTo
+    {
+        return $this->belongsTo(CustomerTransport::class, 'transport_id');
+    }
+
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
