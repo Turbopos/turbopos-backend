@@ -1104,7 +1104,7 @@ Get list of sales transactions with optional filters and pagination, sorted by t
                 "id": 1,
                 "nama": "User 1"
             },
-            "sales_transaction_details": [
+            "details": [
                 {
                     "id": 1,
                     "product_id": 1,
@@ -1161,7 +1161,7 @@ None
             "id": 1,
             "nama": "User 1"
         },
-        "sales_transaction_details": [
+        "details": [
             {
                 "id": 1,
                 "product_id": 1,
