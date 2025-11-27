@@ -979,7 +979,6 @@ Create a new purchase order with batch items.
 | Name                 | Type    | Default Value |
 | -------------------- | ------- | ------------- |
 | distributor_id       | integer | required      |
-| user_id              | integer | required      |
 | ppn                  | numeric | required      |
 | diskon               | numeric | required      |
 | transaction_at       | date    | required      |
@@ -1006,11 +1005,8 @@ Update a purchase order. Items are optional; if provided, existing details will 
 
 | Name                 | Type    | Default Value     |
 | -------------------- | ------- | ----------------- |
-| distributor_id       | integer | null              |
-| user_id              | integer | null              |
 | ppn                  | numeric | null              |
 | diskon               | numeric | null              |
-| transaction_at       | date    | null              |
 | items                | array   | null              |
 | items.\*.product_id  | integer | required if items |
 | items.\*.harga_pokok | integer | required if items |
@@ -1216,7 +1212,6 @@ Update a sales transaction. Existing details will be replaced with new items.
 
 | Name                | Type    | Default Value |
 | ------------------- | ------- | ------------- |
-| customer_id         | integer | required      |
 | ppn                 | numeric | 0             |
 | diskon              | numeric | 0             |
 | items               | array   | required      |
