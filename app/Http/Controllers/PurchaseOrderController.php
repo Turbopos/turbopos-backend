@@ -214,48 +214,5 @@ class PurchaseOrderController extends Controller
         return response()->json(['message' => 'Purchase order status updated successfully']);
     }
 
-    public function report(Request $request)
-    {
-        $request->validate([
-            'month' => 'nullable|date_format:Y-m',
-            'distributor_id' => 'nullable|exists:distributors,id',
-        ]);
 
-        $query = PurchaseOrderDetail::with('product', 'purchaseOrder')
-            ->whereHas('purchaseOrder', function ($q) use ($request) {
-                if ($request->month) {
-                    $q->whereYear('transaction_at', '=', date('Y', strtotime($request->month)))
-                        ->whereMonth('transaction_at', '=', date('m', strtotime($request->month)));
-                }
-                if ($request->distributor_id) {
-                    $q->where('distributor_id', $request->distributor_id);
-                }
-            });
-
-        $details = $query->get();
-
-        $aggregated = $details->groupBy('product_id')->map(function ($group) {
-            $product = $group->first()->product;
-            $totalJumlah = $group->sum('jumlah');
-            $hargaPokok = $group->first()->harga_pokok;
-            $subTotal = $group->sum('subtotal');
-            $total = $group->sum('total');
-
-            return [
-                'nama_barang' => $product->nama,
-                'jumlah' => $totalJumlah,
-                'satuan' => $product->satuan,
-                'harga_pokok' => $hargaPokok,
-                'sub_total' => $subTotal,
-                'total' => $total,
-            ];
-        });
-
-        $totalKeseluruhan = $aggregated->sum('total');
-
-        return response()->json([
-            'report' => $aggregated->values(),
-            'total_keseluruhan' => $totalKeseluruhan,
-        ]);
-    }
 }

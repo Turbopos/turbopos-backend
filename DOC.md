@@ -1266,7 +1266,7 @@ None
 
 ### GET /report/purchase-order
 
-Get purchase order report aggregated by product, filtered by month and/or distributor.
+Get purchase order report aggregated by product, filtered by month and/or distributor, with pagination.
 
 #### Parameters
 
@@ -1274,27 +1274,30 @@ Get purchase order report aggregated by product, filtered by month and/or distri
 | -------------- | ------- | ------------- |
 | month          | string  | null          |
 | distributor_id | integer | null          |
+| limit          | integer | 10            |
 
 #### Response
 
 ```json
 {
-    "report": [
+    "purchase_order_reports": [
         {
             "nama_barang": "Product 1",
-            "jml": 100,
+            "jumlah": 100,
             "satuan": "pcs",
             "harga_pokok": 10000,
-            "sub_total": 1000000
+            "sub_total": 1000000,
+            "total": 1000000
         }
     ],
-    "total_keseluruhan": 1000000
+    "total": 1,
+    "per_page": 10
 }
 ```
 
 ### GET /report/sales-transaction
 
-Get sales transaction report aggregated by product, filtered by month and/or category.
+Get sales transaction report aggregated by product, filtered by month and/or category, with pagination.
 
 #### Parameters
 
@@ -1302,98 +1305,107 @@ Get sales transaction report aggregated by product, filtered by month and/or cat
 | ----------- | ------- | ------------- |
 | month       | string  | null          |
 | category_id | integer | null          |
+| limit       | integer | 10            |
 
 #### Response
 
 ```json
 {
-    "report": [
+    "sales_transaction_reports": [
         {
             "nama_barang": "Product 1",
-            "jml": 50,
+            "jumlah": 50,
             "satuan": "pcs",
             "harga_jual": 15000,
-            "sub_total": 750000
+            "sub_total": 750000,
+            "total": 750000
         }
     ],
-    "total_keseluruhan": 750000
+    "total": 1,
+    "per_page": 10
 }
 ```
 
 ### GET /report/profit-loss-item
 
-Get profit/loss report per item, filtered by month.
+Get profit/loss report per item, filtered by month, with pagination.
 
 #### Parameters
 
-| Name  | Type   | Default Value |
-| ----- | ------ | ------------- |
-| month | string | null          |
+| Name  | Type    | Default Value |
+| ----- | ------- | ------------- |
+| month | string  | null          |
+| limit | integer | 10            |
 
 #### Response
 
 ```json
 {
-    "report": [
+    "profit_loss_items": [
         {
             "nama_barang": "Product 1",
-            "jml": 50,
+            "jumlah": 50,
             "satuan": "pcs",
             "harga_beli": 10000,
             "harga_jual": 15000,
             "laba_rugi": 250000
         }
     ],
-    "total_keseluruhan": 250000
+    "total": 1,
+    "per_page": 10
 }
 ```
 
 ### GET /report/profit-loss-category
 
-Get profit/loss report per category, filtered by month.
+Get profit/loss report per category, filtered by month, with pagination.
 
 #### Parameters
 
-| Name  | Type   | Default Value |
-| ----- | ------ | ------------- |
-| month | string | null          |
+| Name  | Type    | Default Value |
+| ----- | ------- | ------------- |
+| month | string  | null          |
+| limit | integer | 10            |
 
 #### Response
 
 ```json
 {
-    "report": [
+    "profit_loss_categories": [
         {
             "kategori": "Category 1",
             "total_laba_rugi": 250000
         }
     ],
-    "total_keseluruhan": 250000
+    "total": 1,
+    "per_page": 10
 }
 ```
 
 ### GET /report/stock
 
-Get stock report for products, with optional filters.
+Get stock report for products, with optional filters and pagination.
 
 #### Parameters
 
 | Name        | Type    | Default Value       |
 | ----------- | ------- | ------------------- |
 | category_id | integer | null                |
-| jenis       | string  | null (barang, jasa) |
+| limit       | integer | 10                  |
 
 #### Response
 
 ```json
 {
-    "report": [
+    "stock_reports": [
         {
             "nama_barang": "Product 1",
-            "jml": 100,
+            "jumlah": 100,
             "satuan": "pcs",
             "stok": 100
         }
-    ]
+    ],
+    "total": 1,
+    "per_page": 10
 }
 ```
