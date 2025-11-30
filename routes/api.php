@@ -16,6 +16,8 @@ Route::post('/login', [AuthController::class, 'login']);
 
 Route::middleware(['jwt.auth', 'verify.user.exists'])->group(function () {
     Route::get('/profile', [AuthController::class, 'getProfile']);
+    Route::post('/profile', [AuthController::class, 'update']);
+
     Route::resource('/category', CategoryController::class, ['except' => ['show', 'create']]);
     Route::resource('/user', UserController::class, ['except' => ['create']]);
     Route::resource('/customer', CustomerController::class, ['except' => ['create']]);

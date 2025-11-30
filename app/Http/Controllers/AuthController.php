@@ -60,7 +60,7 @@ class AuthController extends Controller
 
         $request->validate([
             'username' => 'sometimes|unique:users,username,' . $user->id,
-            'password' => 'sometimes|min:8',
+            'password' => 'nullable|min:8',
             'nama' => 'sometimes|string',
         ]);
 
