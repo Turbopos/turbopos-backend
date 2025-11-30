@@ -1409,3 +1409,34 @@ Get stock report for products, with optional filters and pagination.
     "per_page": 10
 }
 ```
+
+### GET /report/dashboard
+
+Get dashboard summary with today's sales total, transaction count, best-selling product, and low-stock products.
+
+#### Parameters
+
+None
+
+#### Response
+
+```json
+{
+    "data": {
+        "total_penjualan_hari_ini": 165000,
+        "jumlah_transaksi_hari_ini": 5,
+        "produk_terlaris": {
+            "nama": "Product 1",
+            "total_jumlah": 50,
+            "satuan": "pcs"
+        },
+        "produk_stok_rendah": [
+            {
+                "nama": "Product 2",
+                "stok": 3,
+                "satuan": "pcs"
+            }
+        ]
+    }
+}
+```

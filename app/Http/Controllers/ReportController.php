@@ -4,8 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Models\Product;
 use App\Models\PurchaseOrderDetail;
+use App\Models\SalesTransaction;
 use App\Models\SalesTransactionDetail;
 use Illuminate\Http\Request;
+use Carbon\Carbon;
 
 class ReportController extends Controller
 {
@@ -221,5 +223,47 @@ class ReportController extends Controller
         );
 
         return response()->json($this->paginatedResponse($paginatedData, 'sales_transaction_reports'));
+    }
+
+    public function dashboardSummary()
+    {
+        $today = Carbon::today();
+
+        // Total penjualan hari ini
+        $totalPenjualanHariIni = SalesTransaction::whereDate('transaction_at', $today)->sum('total');
+
+        // Jumlah transaksi hari ini
+        $jumlahTransaksiHariIni = SalesTransaction::whereDate('transaction_at', $today)->count();
+
+        // Produk terlaris hari ini
+        $produkTerlaris = SalesTransactionDetail::with('product')
+            ->whereHas('product', function ($q) {
+                $q->where('jenis', 'barang');
+            })
+            ->selectRaw('product_id, SUM(jumlah) as total_jumlah')
+            ->groupBy('product_id')
+            ->orderBy('total_jumlah', 'desc')
+            ->first();
+
+        $produkTerlarisData = $produkTerlaris ? [
+            'nama' => $produkTerlaris->product->nama,
+            'total_jumlah' => $produkTerlaris->total_jumlah,
+            'satuan' => $produkTerlaris->product->satuan,
+        ] : null;
+
+        // Produk stok rendah
+        $produkStokRendah = Product::where('jenis', Product::JENIS_BARANG)
+            ->where('stok', '<=', 5)
+            ->get(['nama', 'stok', 'satuan'])
+            ->count();
+
+        return response()->json([
+            'data' => [
+                'total_penjualan_hari_ini' => $totalPenjualanHariIni,
+                'jumlah_transaksi_hari_ini' => $jumlahTransaksiHariIni,
+                'produk_terlaris' => $produkTerlarisData,
+                'produk_stok_rendah' => $produkStokRendah,
+            ]
+        ]);
     }
 }
