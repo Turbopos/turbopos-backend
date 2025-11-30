@@ -13,6 +13,8 @@ class SalesTransaction extends Model
 
     const STATUS_PENDING = 'pending';
 
+    const STATUS_INPROGRESS = 'in_progress';
+
     const STATUS_COMPLETED = 'completed';
 
     const STATUS_CANCELLED = 'cancelled';
