@@ -41,7 +41,7 @@ trait BarcodeController
             mkdir($dirPath, 0777, true);
         }
 
-        $filePath = '/barcodes/' . $randomFilename;
+        $filePath = '/storage/barcodes/' . $randomFilename;
 
         file_put_contents(public_path($filePath), $renderer->render($barcode, $barcode->getWidth() * 3, 50));
 

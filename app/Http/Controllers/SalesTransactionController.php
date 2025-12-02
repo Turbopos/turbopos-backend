@@ -216,13 +216,11 @@ class SalesTransactionController extends Controller
         $salesTransaction = SalesTransaction::findOrFail($id);
 
         $request->validate([
-            'status' => 'required|in:pending,completed,cancelled',
+            'status' => 'required|in:in_progress,completed,cancelled',
         ]);
 
         $salesTransaction->update(['status' => $request->status]);
 
         return response()->json(['message' => 'Sales transaction status updated successfully']);
     }
-
-
 }
