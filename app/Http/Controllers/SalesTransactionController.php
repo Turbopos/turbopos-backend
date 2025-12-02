@@ -51,7 +51,8 @@ class SalesTransactionController extends Controller
 
     public function show($id)
     {
-        $salesTransaction = SalesTransaction::with(['customer', 'transport', 'user', 'details', 'details.product'])->findOrFail($id);
+        $salesTransaction = SalesTransaction::with(['customer', 'transport', 'user', 'mekanik', 'details', 'details.product'])->findOrFail($id);
+
         return response()->json(['sales_transaction' => $salesTransaction]);
     }
 
@@ -60,6 +61,7 @@ class SalesTransactionController extends Controller
         $request->validate([
             'customer_id' => 'nullable|exists:customers,id',
             'transport_id' => 'nullable|exists:customer_transports,id',
+            'mekanik_id' => 'nullable|exists:users,id',
             'ppn' => 'nullable|numeric|min:0',
             'diskon' => 'nullable|numeric|min:0',
             'transaction_at' => 'nullable|date',
@@ -104,6 +106,7 @@ class SalesTransactionController extends Controller
                 'kode' => uniqid('ST-'),
                 'customer_id' => $request->customer_id,
                 'transport_id' => $request->transport_id,
+                'mekanik_id' => $request->mekanik_id,
                 'user_id' => Auth::id(),
                 'ppn' => $ppn,
                 'subtotal' => $subtotal,
@@ -134,6 +137,7 @@ class SalesTransactionController extends Controller
     public function update(Request $request, $id)
     {
         $request->validate([
+            'mekanik_id' => 'nullable|exists:users,id',
             'ppn' => 'nullable|numeric|min:0',
             'diskon' => 'nullable|numeric|min:0',
             'items' => 'required|array|min:1',
@@ -176,6 +180,7 @@ class SalesTransactionController extends Controller
             $total = $subtotal + $ppnValue - $diskonValue;
 
             $salesTransaction->update([
+                'mekanik_id' => $request->mekanik_id,
                 'user_id' => Auth::id(),
                 'ppn' => $ppn,
                 'subtotal' => $subtotal,

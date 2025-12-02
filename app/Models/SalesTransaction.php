@@ -23,6 +23,7 @@ class SalesTransaction extends Model
         'kode',
         'customer_id',
         'transport_id',
+        'mekanik_id',
         'user_id',
         'ppn',
         'subtotal',
@@ -49,6 +50,11 @@ class SalesTransaction extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function mekanik(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'mekanik_id');
     }
 
     public function details(): HasMany
