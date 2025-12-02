@@ -65,6 +65,7 @@ class SalesTransactionController extends Controller
             'ppn' => 'nullable|numeric|min:0',
             'diskon' => 'nullable|numeric|min:0',
             'transaction_at' => 'nullable|date',
+            'tunai' => "required|numeric|min:0",
             'items' => 'required|array|min:1',
             'items.*.product_id' => 'required|exists:products,id',
             'items.*.jumlah' => 'required|integer|min:1',
@@ -112,6 +113,7 @@ class SalesTransactionController extends Controller
                 'subtotal' => $subtotal,
                 'diskon' => $diskon,
                 'total' => $total,
+                'tunai' => $request->tunai,
                 'status' => SalesTransaction::STATUS_PENDING,
                 'transaction_at' => $request->transaction_at ?? Carbon::now(),
             ]);
@@ -140,6 +142,7 @@ class SalesTransactionController extends Controller
             'mekanik_id' => 'nullable|exists:users,id',
             'ppn' => 'nullable|numeric|min:0',
             'diskon' => 'nullable|numeric|min:0',
+            'tunai' => 'required|numeric|min:0',
             'items' => 'required|array|min:1',
             'items.*.product_id' => 'required|exists:products,id',
             'items.*.jumlah' => 'required|integer|min:1',
@@ -186,6 +189,7 @@ class SalesTransactionController extends Controller
                 'subtotal' => $subtotal,
                 'diskon' => $diskon,
                 'total' => $total,
+                'tunai' => $request->tunai,
             ]);
 
             $salesTransaction->details()->delete();

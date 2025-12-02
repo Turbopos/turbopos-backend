@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -29,6 +30,7 @@ class SalesTransaction extends Model
         'subtotal',
         'diskon',
         'total',
+        'tunai',
         'status',
         'transaction_at',
     ];
@@ -36,6 +38,8 @@ class SalesTransaction extends Model
     protected $casts = [
         'transaction_at' => 'datetime',
     ];
+
+    public $appends = ['kembalian'];
 
     public function customer(): BelongsTo
     {
@@ -60,5 +64,12 @@ class SalesTransaction extends Model
     public function details(): HasMany
     {
         return $this->hasMany(SalesTransactionDetail::class);
+    }
+
+    public function kembalian(): Attribute
+    {
+        return new Attribute(
+            get: fn() => $this->tunai - $this->total,
+        );
     }
 }
