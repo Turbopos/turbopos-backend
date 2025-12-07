@@ -215,20 +215,50 @@ class SalesTransactionController extends Controller
     public function destroy($id)
     {
         $salesTransaction = SalesTransaction::findOrFail($id);
-        $salesTransaction->delete();
+
+        DB::transaction(function () use ($salesTransaction) {
+            $salesTransaction->delete();
+            $products = Product::whereIn("id", $salesTransaction->details->pluck('product_id')->toArray())->get();
+
+            foreach ($salesTransaction->details as $detail) {
+                $product = $products->where('id', $detail->product_id)->first();
+                if ($product->jenis == Product::JENIS_BARANG) {
+                    $product->update([
+                        'stok' => $product->stok + $detail->jumlah,
+                    ]);
+                }
+            }
+        });
 
         return response()->json(['message' => 'Sales transaction deleted successfully']);
     }
 
     public function updateStatus(Request $request, $id)
     {
-        $salesTransaction = SalesTransaction::findOrFail($id);
+        $salesTransaction = SalesTransaction::with(['details'])->findOrFail($id);
 
         $request->validate([
             'status' => 'required|in:in_progress,completed,cancelled',
         ]);
 
-        $salesTransaction->update(['status' => $request->status]);
+        $status = $request->status;
+
+        DB::transaction(function () use ($salesTransaction, $status) {
+            $salesTransaction->update(['status' => $status]);
+            $products = Product::whereIn("id", $salesTransaction->details->pluck('product_id')->toArray())->get();
+
+            if ($status == 'completed') {
+                foreach ($salesTransaction->details as $detail) {
+                    $product = $products->where('id', $detail->product_id)->first();
+                    if ($product->jenis == Product::JENIS_BARANG) {
+
+                        $product->update([
+                            'stok' => $product->stok - $detail->jumlah,
+                        ]);
+                    }
+                }
+            }
+        });
 
         return response()->json(['message' => 'Sales transaction status updated successfully']);
     }
