@@ -107,7 +107,18 @@ class PurchaseOrderController extends Controller
                 'transaction_at' => $request->transaction_at ?? Carbon::now(),
             ]);
 
+            $products = Product::whereIn('id', collect($items)->pluck('product_id')->toArray())->get();
+
             foreach ($items as $item) {
+                $product = $products->where('id', $item['product_id'])->first();
+
+                if ($product->jenis == Product::JENIS_BARANG) {
+                    $product->update([
+                        'stok' => $product->stok + $item['jumlah'],
+                        'harga_pokok' => $item['harga_pokok'],
+                    ]);
+                }
+
                 PurchaseOrderDetail::create([
                     'purchase_order_id' => $purchaseOrder->id,
                     'product_id' => $item['product_id'],
@@ -196,7 +207,21 @@ class PurchaseOrderController extends Controller
     public function destroy($id)
     {
         $purchaseOrder = PurchaseOrder::findOrFail($id);
-        $purchaseOrder->delete();
+
+        DB::transaction(function () use ($purchaseOrder) {
+            $products = Product::whereIn("id", $purchaseOrder->details->pluck('product_id')->toArray())->get();
+
+            foreach ($purchaseOrder->details as $detail) {
+                $product = $products->where('id', $detail->product_id)->first();
+                if ($product->jenis == Product::JENIS_BARANG) {
+                    $product->update([
+                        'stok' => $product->stok - $detail->jumlah,
+                    ]);
+                }
+            }
+
+            $purchaseOrder->delete();
+        });
 
         return response()->json(['message' => 'Purchase order deleted successfully']);
     }
@@ -213,6 +238,4 @@ class PurchaseOrderController extends Controller
 
         return response()->json(['message' => 'Purchase order status updated successfully']);
     }
-
-
 }
