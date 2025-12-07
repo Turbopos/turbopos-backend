@@ -22,7 +22,7 @@ class SettingController extends Controller
             'nama' => 'required',
             'email' => 'required|email',
             'telepon' => 'required',
-            'alamat' => 'requried|string',
+            'alamat' => 'required|string',
         ]);
 
         $setting = Setting::find(1);
