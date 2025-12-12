@@ -38,9 +38,9 @@ Route::middleware(['jwt.auth', 'verify.user.exists'])->group(function () {
         Route::get('/profit-loss-category', [ReportController::class, 'profitLossCategory']);
         Route::get('/stock', [ReportController::class, 'stockReport']);
     });
+});
 
-    Route::prefix('/setting')->group(function () {
-        Route::get('/', [SettingController::class, 'index']);
-        Route::put('/', [SettingController::class, 'update']);
-    });
+Route::prefix('/setting')->group(function () {
+    Route::get('/', [SettingController::class, 'index']);
+    Route::middleware('jwt.auth', 'verify.user.exists')->put('/', [SettingController::class, 'update']);
 });
