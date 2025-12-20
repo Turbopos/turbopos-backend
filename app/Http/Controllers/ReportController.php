@@ -212,7 +212,7 @@ class ReportController extends Controller
                 'sub_total' => $subTotal,
                 'total' => $total,
             ];
-        })->values();
+        })->sortByDesc('jumlah')->values();
 
         $limit = $request->get('limit', 10);
         $paginatedData = new \Illuminate\Pagination\LengthAwarePaginator(

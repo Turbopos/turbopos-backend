@@ -12,7 +12,9 @@ class AdminSeeder extends Seeder
      */
     public function run(): void
     {
-        User::create([
+        User::updateOrCreate([
+            'username' => 'admin',
+        ], [
             'username' => "admin",
             'password' => 'admin',
             'nama' => "Admin",
