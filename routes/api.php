@@ -5,6 +5,7 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\CustomerTransportController;
 use App\Http\Controllers\DistributorController;
+use App\Http\Controllers\OpnameController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\PurchaseOrderController;
 use App\Http\Controllers\ReportController;
@@ -27,6 +28,7 @@ Route::middleware(['jwt.auth', 'verify.user.exists'])->group(function () {
     Route::resource('/product', ProductController::class, ['except' => ['create']]);
     Route::resource('/purchase-order', PurchaseOrderController::class, ['except' => ['create', 'edit']]);
     Route::put('/purchase-order/{id}/status', [PurchaseOrderController::class, 'updateStatus']);
+    Route::resource('/opname', OpnameController::class, ['except' => ['create', 'edit', 'update', 'destroy']]);
     Route::resource('/sales-transaction', SalesTransactionController::class, ['expect' => ['create', 'edit']]);
     Route::put('/sales-transaction/{id}/status', [SalesTransactionController::class, 'updateStatus']);
 
