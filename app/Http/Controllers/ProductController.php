@@ -52,6 +52,7 @@ class ProductController extends Controller
     {
         $request->validate([
             'jenis' => 'required|in:barang,jasa',
+            'sn' => 'nullable|string',
             'category_id' => 'required|exists:categories,id',
             'nama' => 'required|string',
             'distributor_id' => 'nullable|exists:distributors,id',
@@ -76,6 +77,7 @@ class ProductController extends Controller
 
         $request->validate([
             'jenis' => 'sometimes|in:barang,jasa',
+            'sn' => 'sometimes|nullable|string',
             'category_id' => 'sometimes|exists:categories,id',
             'nama' => 'sometimes|string',
             'distributor_id' => 'nullable|exists:distributors,id',
@@ -115,6 +117,7 @@ class ProductController extends Controller
             $data['harga_pokok'] = null;
             $data['stok'] = null;
             $data['satuan'] = null;
+            $data['sn'] = null;
         }
 
         return $data;
