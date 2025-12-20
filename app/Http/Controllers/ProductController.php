@@ -36,6 +36,19 @@ class ProductController extends Controller
             });
         }
 
+        $orderBy = $request->get('order_by', 'nama');
+        $sort = $request->get('sort', 'asc');
+
+        if (!in_array($orderBy, ['nama', 'stok'])) {
+            $orderBy = 'nama';
+        }
+
+        if (!in_array(strtolower($sort), ['asc', 'desc'])) {
+            $sort = 'asc';
+        }
+
+        $query->orderBy($orderBy, $sort);
+
         $limit = $request->get('limit', 10);
         $products = $query->paginate($limit);
 
