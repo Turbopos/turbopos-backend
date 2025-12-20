@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Opname;
 use App\Models\OpnameDetail;
+use App\Models\Product;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -77,7 +78,17 @@ class OpnameController extends Controller
                 'transaction_at' => $request->transaction_at ?? Carbon::now(),
             ]);
 
+            $products = Product::whereIn('id', collect($items)->pluck('product_id')->toArray())->get();
+
             foreach ($items as $item) {
+                $product = $products->where('id', $item['product_id'])->first();
+
+                if ($product->jenis == Product::JENIS_BARANG) {
+                    $product->update([
+                        'stok' => $item['jumlah_opname'],
+                    ]);
+                }
+
                 OpnameDetail::create([
                     'opname_id' => $opname->id,
                     'product_id' => $item['product_id'],
