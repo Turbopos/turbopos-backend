@@ -111,8 +111,9 @@ class ReportController extends Controller
             return [
                 'nama_barang' => $product->nama,
                 'jumlah' => $product->stok,
+                'harga_pokok' => $product->harga_pokok,
                 'satuan' => $product->satuan,
-                'stok' => $product->stok,
+                'subtotal' => $product->harga_pokok * $product->stok,
             ];
         });
 
