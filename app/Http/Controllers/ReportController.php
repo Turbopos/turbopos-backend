@@ -202,7 +202,7 @@ class ReportController extends Controller
             $jumlahAwal = $group->sum('jumlah_awal');
             $jumlahOpname = $group->sum('jumlah_opname');
             $selisih = $group->sum('selisih');
-            $total = $group->sum('total');
+            $total = $group->sum('total_selisih');
             $hargaPokok = $group->first()->harga_pokok;
 
             return [
