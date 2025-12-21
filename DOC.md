@@ -1262,6 +1262,129 @@ None
 }
 ```
 
+## Opname
+
+### GET /opname
+
+Get list of opname records with optional filters and pagination, sorted by transaction_at desc.
+
+#### Parameters
+
+| Name                | Type    | Default Value |
+| ------------------- | ------- | ------------- |
+| user_id             | integer | null          |
+| search              | string  | null          |
+| transaction_at_from | date    | null          |
+| transaction_at_to   | date    | null          |
+| limit               | integer | 10            |
+
+#### Response
+
+```json
+{
+    "opnames": [
+        {
+            "id": 1,
+            "kode": "OP-6743a123456789",
+            "user_id": 1,
+            "total": 50000,
+            "transaction_at": "2025-11-25T00:00:00.000000Z",
+            "created_at": "2025-11-25T00:25:44.000000Z",
+            "updated_at": "2025-11-25T00:25:44.000000Z",
+            "user": {
+                "id": 1,
+                "nama": "User 1"
+            },
+            "details": [
+                {
+                    "id": 1,
+                    "opname_id": 1,
+                    "product_id": 1,
+                    "harga_pokok": 10000,
+                    "jumlah_awal": 100,
+                    "jumlah_opname": 90,
+                    "selisih": -10,
+                    "total_selisih": -100000,
+                    "product": {
+                        "id": 1,
+                        "nama": "Product 1"
+                    }
+                }
+            ]
+        }
+    ],
+    "total": 1,
+    "per_page": 10
+}
+```
+
+### GET /opname/{id}
+
+Get a specific opname record with details.
+
+#### Parameters
+
+None
+
+#### Response
+
+```json
+{
+    "opname": {
+        "id": 1,
+        "kode": "OP-6743a123456789",
+        "user_id": 1,
+        "total": 50000,
+        "transaction_at": "2025-11-25T00:00:00.000000Z",
+        "created_at": "2025-11-25T00:25:44.000000Z",
+        "updated_at": "2025-11-25T00:25:44.000000Z",
+        "user": {
+            "id": 1,
+            "nama": "User 1"
+        },
+        "details": [
+            {
+                "id": 1,
+                "opname_id": 1,
+                "product_id": 1,
+                "harga_pokok": 10000,
+                "jumlah_awal": 100,
+                "jumlah_opname": 90,
+                "selisih": -10,
+                "total_selisih": -100000,
+                "product": {
+                    "id": 1,
+                    "nama": "Product 1"
+                }
+            }
+        ]
+    }
+}
+```
+
+### POST /opname
+
+Create a new opname record with batch items. Calculates selisih (difference) and total_selisih (total difference value) automatically.
+
+#### Parameters
+
+| Name                   | Type    | Default Value |
+| ---------------------- | ------- | ------------- |
+| transaction_at         | date    | now           |
+| items                  | array   | required      |
+| items.*.product_id     | integer | required      |
+| items.*.harga_pokok    | numeric | required      |
+| items.*.jumlah_awal    | integer | required      |
+| items.*.jumlah_opname  | integer | required      |
+
+#### Response
+
+```json
+{
+    "message": "Opname created successfully"
+}
+```
+
 ## Reports
 
 ### GET /report/purchase-order
