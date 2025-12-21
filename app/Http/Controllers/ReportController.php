@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\OpnameDetail;
 use App\Models\Product;
 use App\Models\PurchaseOrderDetail;
 use App\Models\SalesTransaction;
@@ -174,6 +175,56 @@ class ReportController extends Controller
         );
 
         return response()->json($this->paginatedResponse($paginatedData, 'purchase_order_reports'));
+    }
+
+    public function opnameReport(Request $request)
+    {
+        $request->validate([
+            'month' => 'nullable|date_format:Y-m',
+            'user_id' => 'nullable|exists:users,id',
+        ]);
+
+        $query = OpnameDetail::with('product', 'opname')
+            ->whereHas('opname', function ($q) use ($request) {
+                if ($request->month) {
+                    $q->whereYear('transaction_at', '=', date('Y', strtotime($request->month)))
+                        ->whereMonth('transaction_at', '=', date('m', strtotime($request->month)));
+                }
+                if ($request->user_id) {
+                    $q->where('user_id', $request->user_id);
+                }
+            });
+
+        $details = $query->get();
+
+        $aggregated = $details->groupBy('product_id')->map(function ($group) {
+            $product = $group->first()->product;
+            $jumlahAwal = $group->sum('jumlah_awal');
+            $jumlahOpname = $group->sum('jumlah_opname');
+            $selisih = $group->sum('selisih');
+            $total = $group->sum('total');
+            $hargaPokok = $group->first()->harga_pokok;
+
+            return [
+                'nama_barang' => $product->nama,
+                'jumlah_awal' => $jumlahAwal,
+                'jumlah_opname' => $jumlahOpname,
+                'selisih' => $selisih,
+                'satuan' => $product->satuan,
+                'harga_pokok' => $hargaPokok,
+                'total' => $total,
+            ];
+        })->values();
+
+        $limit = $request->get('limit', 10);
+        $paginatedData = new \Illuminate\Pagination\LengthAwarePaginator(
+            $aggregated->forPage($request->get('page', 1), $limit),
+            $aggregated->count(),
+            $limit,
+            $request->get('page', 1)
+        );
+
+        return response()->json($this->paginatedResponse($paginatedData, 'opname_reports'));
     }
 
     public function salesTransactionReport(Request $request)

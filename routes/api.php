@@ -35,6 +35,7 @@ Route::middleware(['jwt.auth', 'verify.user.exists'])->group(function () {
     Route::prefix('/report')->group(function () {
         Route::get('/dashboard', [ReportController::class, 'dashboardSummary']);
         Route::get('/purchase-order', [ReportController::class, 'purchaseOrderReport']);
+        Route::get('/opname', [ReportController::class, 'opnameReport']);
         Route::get('/sales-transaction', [ReportController::class, 'salesTransactionReport']);
         Route::get('/profit-loss-item', [ReportController::class, 'profitLossItem']);
         Route::get('/profit-loss-category', [ReportController::class, 'profitLossCategory']);
